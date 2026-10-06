@@ -1,0 +1,9 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core">
+  <td data="${data.totalBytes}">
+    <j:choose>
+      <j:when test="${data != null}">${data.display}</j:when>
+      <j:otherwise>N/A</j:otherwise>
+    </j:choose>
+  </td>
+</j:jelly>

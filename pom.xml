@@ -15,7 +15,7 @@
   <packaging>hpi</packaging>
 
   <name>Specs Monitor</name>
-  <description>Node monitor that shows the CPU model and thread count of each Jenkins node.</description>
+  <description>Node monitors that show the CPU model, thread count and total memory (RAM) of each Jenkins node.</description>
   <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
 
   <licenses>
