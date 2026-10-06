@@ -1,0 +1,15 @@
+<div>
+    Shows the CPU model and the number of hardware threads (logical processors) of each node, for
+    example <code>i7-13700K (16 threads)</code>.
+    <p>
+        The information is read on the node itself: PowerShell on Windows, <code>lscpu</code> or
+        <code>/proc/cpuinfo</code> on Linux, and <code>sysctl</code> on macOS. Long vendor strings such
+        as <code>(R)</code>, <code>(TM)</code>, clock speed and <code>Intel</code> are removed for
+        readability. If the CPU model cannot be determined (for example on AIX or Solaris),
+        <code>N/A</code> is shown.
+    </p>
+    <p>
+        The thread count is the number of processors available to the Java process. It can be lower
+        than the hardware value on nodes with CPU limits, such as containers.
+    </p>
+</div>

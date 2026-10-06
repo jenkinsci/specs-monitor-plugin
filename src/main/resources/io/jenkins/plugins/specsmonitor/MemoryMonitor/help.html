@@ -1,0 +1,13 @@
+<div>
+    Shows the total physical memory (RAM) of each node, for example <code>15.6 GB</code>. Sizes use
+    binary units (1 GB = 1024 MB).
+    <p>
+        The information is read on the node itself: PowerShell on Windows, <code>/proc/meminfo</code>
+        on Linux, and <code>sysctl</code> on macOS. On other systems, or if the lookup fails, the value
+        reported by the Java virtual machine is used, or <code>N/A</code> if that is unavailable.
+    </p>
+    <p>
+        On Linux the value is the memory the kernel can use, which is slightly less than the installed
+        amount. Inside a container, the value reported by the JVM may be the container limit.
+    </p>
+</div>

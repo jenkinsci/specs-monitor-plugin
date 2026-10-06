@@ -34,6 +34,15 @@ public class SpecsMonitor extends NodeMonitor {
         public String getDisplayName() {
             return Messages.displayName();
         }
+
+        /**
+         * This monitor only reports information, so there is no threshold to take a
+         * node offline.
+         */
+        @Override
+        public boolean canTakeOffline() {
+            return false;
+        }
     }
 
     /**

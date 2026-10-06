@@ -35,6 +35,15 @@ public class MemoryMonitor extends NodeMonitor {
         public String getDisplayName() {
             return Messages.memoryMonitor_displayName();
         }
+
+        /**
+         * This monitor only reports information, so there is no threshold to take a
+         * node offline.
+         */
+        @Override
+        public boolean canTakeOffline() {
+            return false;
+        }
     }
 
     /** Runs on the node itself, so it reports the node's memory. */
