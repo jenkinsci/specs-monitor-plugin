@@ -21,8 +21,7 @@ monitor shows `N/A`.
 ## Memory monitor
 
 A second monitor, **Total Memory**, shows the total physical memory (RAM) of every node as a
-separate column, for example `15.6 GB`. Sizes use binary units (1 GB = 1024 MB), like the other
-Jenkins node monitors.
+separate column, for example `15.6 GiB`. Sizes use binary units (1 GiB = 1024 MiB).
 
 - Windows: `Win32_ComputerSystem.TotalPhysicalMemory` (PowerShell)
 - Linux: `MemTotal` from `/proc/meminfo`

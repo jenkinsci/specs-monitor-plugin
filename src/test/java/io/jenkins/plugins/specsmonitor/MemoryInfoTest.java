@@ -8,18 +8,18 @@ class MemoryInfoTest {
 
     @Test
     void formatsGigabytes() {
-        assertEquals("16 GB", new MemoryInfo(17_179_869_184L).getDisplay());
-        assertEquals("15.6 GB", new MemoryInfo(16_318_356L * 1024).getDisplay());
+        assertEquals("16 GiB", new MemoryInfo(17_179_869_184L).getDisplay());
+        assertEquals("15.6 GiB", new MemoryInfo(16_318_356L * 1024).getDisplay());
     }
 
     @Test
     void formatsMegabytes() {
-        assertEquals("512 MB", new MemoryInfo(536_870_912L).getDisplay());
+        assertEquals("512 MiB", new MemoryInfo(536_870_912L).getDisplay());
     }
 
     @Test
     void formatsTerabytes() {
-        assertEquals("1.5 TB", new MemoryInfo(1_649_267_441_664L).getDisplay());
+        assertEquals("1.5 TiB", new MemoryInfo(1_649_267_441_664L).getDisplay());
     }
 
     @Test
@@ -30,6 +30,6 @@ class MemoryInfoTest {
 
     @Test
     void toStringIsDisplay() {
-        assertEquals("16 GB", new MemoryInfo(17_179_869_184L).toString());
+        assertEquals("16 GiB", new MemoryInfo(17_179_869_184L).toString());
     }
 }

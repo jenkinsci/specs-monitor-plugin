@@ -36,15 +36,15 @@ public class MemoryInfo implements Serializable {
         if (bytes <= 0) {
             return NOT_AVAILABLE;
         }
-        double mb = bytes / KIB / KIB;
-        double gb = mb / KIB;
-        if (gb >= KIB) {
-            return trim(gb / KIB) + " TiB";
+        double mib = bytes / KIB / KIB;
+        double gib = mib / KIB;
+        if (gib >= KIB) {
+            return trim(gib / KIB) + " TiB";
         }
-        if (gb >= 1) {
-            return trim(gb) + " GiB";
+        if (gib >= 1) {
+            return trim(gib) + " GiB";
         }
-        return trim(mb) + " MiB";
+        return trim(mib) + " MiB";
     }
 
     private static String trim(double value) {
