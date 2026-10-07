@@ -1,4 +1,5 @@
 <?jelly escape-by-default='true'?>
 <div>
-    TODO
+  Adds node monitors that show the CPU model, the number of hardware threads and the total
+  physical memory (RAM) of each node in the node list. Supports Windows, Linux and macOS.
 </div>
