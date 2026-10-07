@@ -3,14 +3,6 @@
 name: cd
 on:
   workflow_dispatch:
-    inputs:
-      validate_only:
-        required: false
-        type: boolean
-        description: |
-          Run validation with release drafter only
-          → Skip the release job
-  # Note: Change this to false if you'd like to use only workflow_dispatch
   check_run:
     types:
       - completed
