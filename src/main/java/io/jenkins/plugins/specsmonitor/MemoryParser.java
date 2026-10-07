@@ -2,7 +2,7 @@ package io.jenkins.plugins.specsmonitor;
 
 import java.util.List;
 
-/** Extracts the total memory in bytes from system tool output. */
+/** Extracts the total memory (RAM) in bytes from system tool output. */
 final class MemoryParser {
 
     private static final String MEMTOTAL = "MemTotal:";
