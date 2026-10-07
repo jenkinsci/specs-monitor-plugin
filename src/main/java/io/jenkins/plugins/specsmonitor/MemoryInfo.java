@@ -25,7 +25,7 @@ public class MemoryInfo implements Serializable {
     }
 
     /**
-     * Human-readable size using binary units, e.g. {@code 15.6 GB}, or {@code N/A}
+     * Human-readable size using binary units, e.g. {@code 15.6 GiB}, or {@code N/A}
      * if unknown.
      */
     public String getDisplay() {
@@ -39,12 +39,12 @@ public class MemoryInfo implements Serializable {
         double mb = bytes / KIB / KIB;
         double gb = mb / KIB;
         if (gb >= KIB) {
-            return trim(gb / KIB) + " TB";
+            return trim(gb / KIB) + " TiB";
         }
         if (gb >= 1) {
-            return trim(gb) + " GB";
+            return trim(gb) + " GiB";
         }
-        return trim(mb) + " MB";
+        return trim(mb) + " MiB";
     }
 
     private static String trim(double value) {
