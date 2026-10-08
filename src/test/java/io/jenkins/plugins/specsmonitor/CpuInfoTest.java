@@ -24,7 +24,14 @@ class CpuInfoTest {
                 "AMD Ryzen 9 7950X 16-Core Processor|Ryzen 9 7950X",
                 "AMD EPYC 7763 64-Core Processor|EPYC 7763",
                 "AMD   Ryzen   5   5600X|Ryzen 5 5600X",
-                "intel(r) core(tm) i5-12400|i5-12400"
+                "intel(r) core(tm) i5-12400|i5-12400",
+                "AMD FX(tm)-8320 Eight-Core Processor|FX-8320",
+                "AMD FX(tm)-8120 Eight-Core Processor|FX-8120",
+                "AMD Phenom(tm) II X4 955 Processor|Phenom II X4 955",
+                "AMD Athlon(tm) II X2 250 Processor|Athlon II X2 250",
+                "Intel(R) Core(TM)2 Duo CPU E8400 @ 3.00GHz|Core2 Duo E8400",
+                "Intel(R) Xeon(R) CPU E5-2680 v4 @ 2.40GHz|Xeon E5-2680 v4",
+                "AMD Opteron(tm) Processor 6174 Twelve-Core|Opteron 6174"
             })
     void shortNameStripsNoise(String raw, String expected) {
         assertEquals(expected, new CpuInfo(raw, 8).getShortName());
