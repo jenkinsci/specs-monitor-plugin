@@ -31,7 +31,12 @@ class CpuInfoTest {
                 "AMD Athlon(tm) II X2 250 Processor|Athlon II X2 250",
                 "Intel(R) Core(TM)2 Duo CPU E8400 @ 3.00GHz|Core2 Duo E8400",
                 "Intel(R) Xeon(R) CPU E5-2680 v4 @ 2.40GHz|Xeon E5-2680 v4",
-                "AMD Opteron(tm) Processor 6174 Twelve-Core|Opteron 6174"
+                "AMD Opteron(tm) Processor 6174 Twelve-Core|Opteron 6174",
+                "Intel(R) Core(TM) Ultra 7 270K Plus|Ultra 7 270K Plus",
+                "AMD Ryzen(TM) Threadripper(TM) PRO 9965WX|Ryzen Threadripper PRO 9965WX",
+                "AMD Ryzen(TM) AI Max+ 392|Ryzen AI Max+ 392",
+                "Intel(R) Core(tm) i5-13600KF|i5-13600KF",
+                "AMD Ryzen(TM) 9 7945HX3D|Ryzen 9 7945HX3D"
             })
     void shortNameStripsNoise(String raw, String expected) {
         assertEquals(expected, new CpuInfo(raw, 8).getShortName());
