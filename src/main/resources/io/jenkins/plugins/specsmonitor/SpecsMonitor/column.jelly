@@ -2,7 +2,7 @@
 <j:jelly xmlns:j="jelly:core">
   <j:set var="comp" value="${c != null ? c : it}"/>
   <j:set var="data" value="${from.data(comp)}"/>
-  <td align="right" data="${data}">
+  <td align="right" data="${data}" tooltip="${data.name}">
     <j:choose>
       <j:when test="${data != null}">
         ${data.shortName} (${data.threads} Threads)
