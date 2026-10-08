@@ -18,7 +18,7 @@ public class CpuInfo implements Serializable {
     private static final Pattern NOISE = Pattern.compile(
             "@\\s*[\\d.]+\\s*[GM]Hz" // @ 2.40GHz
                     + "|\\b\\d+(?:st|nd|rd|th)\\s+Gen\\b" // 13th Gen
-                    + "|\\b(?:\\d+|Single|Dual|Triple|Quad|Penta|Hexa|Six|Octa|Eight|Ten|Twelve|Sixteen)-Core\\b" // 8-Core,
+                    + "|\\b(?:\\d+|Single|Dual|Triple|Quad|Penta|Hexa|Six|Octa|Eight|Ten|Twelve|Sixteen)-Cores?\\b" // 8-Core,
                     // Eight-Core
                     + "|\\b(?:Intel|AMD|Core|CPU|Processor)\\b", // vendor/filler words
             Pattern.CASE_INSENSITIVE);
@@ -50,6 +50,10 @@ public class CpuInfo implements Serializable {
      */
     public int getThreads() {
         return threads;
+    }
+
+    public String getScore() {
+        return CpuScoreLookup.formatFor(getShortName());
     }
 
     @Override

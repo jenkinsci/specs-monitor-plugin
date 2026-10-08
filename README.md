@@ -4,7 +4,10 @@
 
 Adds a node monitor that shows the CPU model and the number of hardware threads (logical processors) of every
 node (built-in node and agents) in the Jenkins node list. This makes it easy to see which
-agents are fast or slow without opening each machine.
+agents are fast or slow without opening each machine. When a CPU matches, the column also shows
+its median CPU benchmark score from [Blender Open Data](https://opendata.blender.org/benchmarks/query/?compute_type=CPU&blender_version=5.2.0&group_by=device_name).
+The bundled `src/main/resources/io/jenkins/plugins/specsmonitor/SpecsMonitor/blender_open_data.csv`
+contains the Blender device name and median score.
 
 The monitor runs on the node itself, so it reports the hardware of that node. Long vendor
 strings such as `13th Gen Intel(R) Core(TM) i9-13900H` are shortened to `i9-13900H`.
@@ -20,7 +23,7 @@ monitor shows `N/A`.
 
 ## Memory monitor
 
-A second monitor, **RAM**, shows the available or free memory (RAM) of every node as a
+A second monitor, **Free RAM**, shows the available or free memory (RAM) of every node as a
 separate column, for example `15.6 GiB`. Sizes use binary units (1 GiB = 1024 MiB). Hovering over the value shows how much memory
 is free out of the total (for example `43.5 GiB free of 63.7 GiB`) at the time of the last refresh.
 
