@@ -20,8 +20,9 @@ monitor shows `N/A`.
 
 ## Memory monitor
 
-A second monitor, **RAM**, shows the total physical memory (RAM) of every node as a
-separate column, for example `15.6 GiB`. Sizes use binary units (1 GiB = 1024 MiB).
+A second monitor, **RAM**, shows the available or free memory (RAM) of every node as a
+separate column, for example `15.6 GiB`. Sizes use binary units (1 GiB = 1024 MiB). Hovering over the value shows how much memory
+is free out of the total (for example `43.5 GiB free of 63.7 GiB`) at the time of the last refresh.
 
 - Windows: `Win32_ComputerSystem.TotalPhysicalMemory` (PowerShell)
 - Linux: `MemTotal` from `/proc/meminfo`
@@ -34,7 +35,7 @@ The Linux value is the memory the kernel can use, which is slightly less than th
 
 1. Install the plugin.
 2. Go to **Manage Jenkins → Nodes → Configure Monitors** (gear icon).
-3. Enable **CPU** and/or **RAM**.
+3. Enable **CPU** and/or **Free RAM**.
 4. A CPU column appears in the node list, for example `i7-13700K (16 threads)`.
 
 ### Configuration as Code

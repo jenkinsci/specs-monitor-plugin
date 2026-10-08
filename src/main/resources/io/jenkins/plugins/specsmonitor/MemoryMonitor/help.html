@@ -1,5 +1,5 @@
 <div>
-    Shows the total physical memory (RAM) of each node, for example <code>15.6 GiB</code>. Sizes use
+    Shows the free or available memory (RAM) of each node, for example <code>15.6 GiB</code>. Sizes use
     binary units (1 GiB = 1024 MiB).
     <p>
         The information is read on the node itself: PowerShell on Windows, <code>/proc/meminfo</code>
@@ -7,7 +7,15 @@
         reported by the Java virtual machine is used, or <code>N/A</code> if that is unavailable.
     </p>
     <p>
-        On Linux the value is the memory the kernel can use, which is slightly less than the installed
+        Hover over the value to see how much memory is free out of the total, for example
+        <code>43.5 GiB free of 63.7 GiB</code>. If the operating system reports different values for
+        <em>available</em> memory (usable by applications without swapping, including reclaimable
+        caches) and <em>free</em> memory (completely unused), both are shown. These figures are a
+        snapshot taken when the monitor last refreshed. On macOS the available value is an
+        approximation (free, inactive and speculative pages).
+    </p>
+    <p>
+        On Linux the total value is the memory the kernel can use, which is slightly less than the installed
         amount. Inside a container, the value reported by the JVM may be the container limit.
     </p>
 </div>
