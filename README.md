@@ -21,6 +21,25 @@ Supported operating systems:
 On other systems (for example AIX or Solaris), or if the CPU name cannot be determined, the
 monitor shows `N/A`.
 
+## Screenshots
+
+<div align="center">
+  <table>
+    <tr>
+      <td width="50%" align="center">
+        <img src="docs/images/ScreenshotMonitorTable.png" alt="Jenkins node list showing CPU and memory monitor columns" width="296" />
+        <br />
+        Node list with the CPU and Free RAM columns enabled
+      </td>
+      <td width="50%" align="center">
+        <img src="docs/images/ScreenshotMonitorData.png" alt="Monitor details showing CPU name, threads, and memory values" width="296" />
+        <br />
+        Example monitor data for a Jenkins node
+      </td>
+    </tr>
+  </table>
+</div>
+
 ## Memory monitor
 
 A second monitor, **Free RAM**, shows the available or free memory (RAM) of every node as a
