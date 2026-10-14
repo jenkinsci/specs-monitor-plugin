@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This plugin adds two separate node monitors to the Jenkins node list: a **CPU** monitor and a **Free RAM** monitor.
+This plugin adds node monitors to the Jenkins node list for **CPU**, **Free RAM** and **GPU**.
 The CPU monitor shows the CPU model and the number of hardware threads (logical processors) of every
 node (built-in node and agents). This makes it easy to see which agents are fast or slow without opening each machine.
 When a CPU matches, the column also shows its median CPU benchmark score from [Blender Open Data](https://opendata.blender.org/benchmarks/query/?compute_type=CPU&blender_version=5.2.0&group_by=device_name).
@@ -59,11 +59,17 @@ is free out of the total (for example `43.5 GiB free of 63.7 GiB`) at the time o
 
 The Linux value is the memory the kernel can use, which is slightly less than the installed amount.
 
+## GPU monitor
+
+The **GPU** monitor shows detected graphics processor model names for each node. It uses `nvidia-smi`
+when available, with Windows Management Instrumentation on Windows, `lspci` on Linux, and
+`system_profiler` on macOS as fallbacks. Nodes without detectable GPU information show `N/A`.
+
 ## Getting started
 
 1. Install the plugin.
 2. Go to **Manage Jenkins → Nodes → Configure Monitors** (gear icon).
-3. Enable **CPU** and/or **Free RAM**.
+3. Enable **CPU**, **Free RAM** and/or **GPU**.
 4. A CPU column appears in the node list, for example `i7-13700K (16 threads)`.
 
 ### Configuration as Code
@@ -73,6 +79,7 @@ jenkins:
   nodeMonitors:
     - cpuMonitor
     - memoryMonitor
+    - gpuMonitor
 ```
 
 ## Issues
