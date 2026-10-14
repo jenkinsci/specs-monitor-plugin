@@ -1,6 +1,7 @@
 <div>
     Shows detected GPU model names for each node, for example <code>NVIDIA GeForce RTX 4090</code>.
-    Multiple GPUs are shown as a comma-separated list. The monitor checks <code>nvidia-smi</code>
-    first, then uses PowerShell CIM on Windows, <code>lspci</code> on Linux, or
-    <code>system_profiler</code> on macOS. If no GPU can be detected, <code>N/A</code> is shown.
+    The monitor shows the first GPU returned by the OS inventory (PowerShell CIM on Windows,
+    <code>lspci</code> on Linux, or <code>system_profiler</code> on macOS). It uses the first
+    <code>nvidia-smi</code> result if the OS inventory is unavailable. If no GPU can be detected,
+    <code>N/A</code> is shown.
 </div>

@@ -39,29 +39,32 @@ public class GpuMonitor extends NodeMonitor {
     private static final class GetGpuInfo extends MasterToSlaveCallable<GpuInfo, IOException> {
         private static final long serialVersionUID = 1L;
 
-        private static final String WINDOWS_SCRIPT = "(Get-CimInstance Win32_VideoController | "
-                + "Where-Object { $_.Name } | Select-Object -ExpandProperty Name) -join [Environment]::NewLine";
+        private static final String WINDOWS_SCRIPT = "Get-CimInstance Win32_VideoController | "
+                + "Where-Object { $_.Name } | ForEach-Object { $_.Name + [char]9 + $_.PNPDeviceID }";
 
         @Override
         public GpuInfo call() throws IOException {
-            GpuInfo info = GpuInfo.fromNvidiaSmi(
-                    CommandRunner.tryRun("nvidia-smi", "--query-gpu=name", "--format=csv,noheader"));
-            if (!info.getName().equals("N/A")) {
-                return info;
-            }
-
             String os = System.getProperty("os.name", "").toLowerCase(Locale.ROOT);
             if (os.startsWith("windows")) {
-                return GpuInfo.fromWindows(CommandRunner.tryRun(
+                GpuInfo info = GpuInfo.fromWindows(CommandRunner.tryRun(
                         "powershell.exe", "-NoProfile", "-NonInteractive", "-Command", WINDOWS_SCRIPT));
+                return info.getName().equals("N/A") ? nvidiaFallback() : info;
             }
             if (os.startsWith("linux")) {
-                return GpuInfo.fromLinuxLspci(CommandRunner.tryRun("lspci"));
+                GpuInfo info = GpuInfo.fromLinuxLspci(CommandRunner.tryRun("lspci"));
+                return info.getName().equals("N/A") ? nvidiaFallback() : info;
             }
             if (os.startsWith("mac")) {
-                return GpuInfo.fromMacSystemProfiler(CommandRunner.tryRun("system_profiler", "SPDisplaysDataType"));
+                GpuInfo info =
+                        GpuInfo.fromMacSystemProfiler(CommandRunner.tryRun("system_profiler", "SPDisplaysDataType"));
+                return info.getName().equals("N/A") ? nvidiaFallback() : info;
             }
-            return info;
+            return nvidiaFallback();
+        }
+
+        private static GpuInfo nvidiaFallback() {
+            return GpuInfo.fromNvidiaSmi(
+                    CommandRunner.tryRun("nvidia-smi", "--query-gpu=name", "--format=csv,noheader"));
         }
     }
 }

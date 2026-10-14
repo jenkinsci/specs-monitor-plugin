@@ -61,9 +61,10 @@ The Linux value is the memory the kernel can use, which is slightly less than th
 
 ## GPU monitor
 
-The **GPU** monitor shows detected graphics processor model names for each node. It uses `nvidia-smi`
-when available, with Windows Management Instrumentation on Windows, `lspci` on Linux, and
-`system_profiler` on macOS as fallbacks. Nodes without detectable GPU information show `N/A`.
+The **GPU** monitor shows the first graphics processor model returned by the OS inventory for each
+node: Windows Management Instrumentation, `lspci` on Linux, or `system_profiler` on macOS. If the
+OS inventory is unavailable, it shows the first result from `nvidia-smi`. Nodes without detectable
+GPU information show `N/A`.
 
 ## Getting started
 
