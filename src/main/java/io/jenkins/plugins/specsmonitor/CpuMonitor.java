@@ -16,13 +16,13 @@ import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 /** Node monitor that reports the CPU model and thread count of each node. */
-public class SpecsMonitor extends NodeMonitor {
+public class CpuMonitor extends NodeMonitor {
 
     @DataBoundConstructor
-    public SpecsMonitor() {}
+    public CpuMonitor() {}
 
     @Extension
-    @Symbol("specsMonitor")
+    @Symbol("cpuMonitor")
     public static class DescriptorImpl extends AbstractAsyncNodeMonitorDescriptor<CpuInfo> {
 
         @Override
@@ -32,7 +32,7 @@ public class SpecsMonitor extends NodeMonitor {
 
         @Override
         public String getDisplayName() {
-            return Messages.displayName();
+            return Messages.cpuMonitor_displayName();
         }
 
         /**

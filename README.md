@@ -2,14 +2,14 @@
 
 ## Introduction
 
-Adds a node monitor that shows the CPU model and the number of hardware threads (logical processors) of every
-node (built-in node and agents) in the Jenkins node list. This makes it easy to see which
-agents are fast or slow without opening each machine. When a CPU matches, the column also shows
-its median CPU benchmark score from [Blender Open Data](https://opendata.blender.org/benchmarks/query/?compute_type=CPU&blender_version=5.2.0&group_by=device_name).
-The bundled `src/main/resources/io/jenkins/plugins/specsmonitor/SpecsMonitor/blender_open_data.csv`
+This plugin adds two separate node monitors to the Jenkins node list: a **CPU** monitor and a **Free RAM** monitor.
+The CPU monitor shows the CPU model and the number of hardware threads (logical processors) of every
+node (built-in node and agents). This makes it easy to see which agents are fast or slow without opening each machine.
+When a CPU matches, the column also shows its median CPU benchmark score from [Blender Open Data](https://opendata.blender.org/benchmarks/query/?compute_type=CPU&blender_version=5.2.0&group_by=device_name).
+The bundled `src/main/resources/io/jenkins/plugins/specsmonitor/CpuMonitor/blender_open_data.csv`
 contains the Blender device name and median score.
 
-The monitor runs on the node itself, so it reports the hardware of that node. Long vendor
+The CPU monitor runs on the node itself, so it reports the hardware of that node. Long vendor
 strings such as `13th Gen Intel(R) Core(TM) i9-13900H` are shortened to `i9-13900H`.
 
 Supported operating systems:
@@ -40,6 +40,12 @@ monitor shows `N/A`.
   </table>
 </div>
 
+## CPU monitor
+
+A separate monitor, **CPU**, shows the CPU model and the number of hardware threads (logical processors) of every node as a
+column, for example `i7-13700K (16 threads)`. When a CPU model matches one in the bundled Blender benchmark dataset,
+the column also shows the median benchmark score for that hardware.
+
 ## Memory monitor
 
 A second monitor, **Free RAM**, shows the available or free memory (RAM) of every node as a
@@ -65,7 +71,7 @@ The Linux value is the memory the kernel can use, which is slightly less than th
 ```yaml
 jenkins:
   nodeMonitors:
-    - specsMonitor
+    - cpuMonitor
     - memoryMonitor
 ```
 

@@ -11,24 +11,24 @@ import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 
 @WithJenkins
-class SpecsMonitorTest {
+class CpuMonitorTest {
 
     @Test
     void descriptorIsRegistered(JenkinsRule j) {
         // Throws IllegalStateException if the @Extension was not discovered.
-        SpecsMonitor.DescriptorImpl descriptor = ExtensionList.lookupSingleton(SpecsMonitor.DescriptorImpl.class);
+        CpuMonitor.DescriptorImpl descriptor = ExtensionList.lookupSingleton(CpuMonitor.DescriptorImpl.class);
         assertNotNull(descriptor);
     }
 
     @Test
     void monitorAppearsInNodeMonitorList(JenkinsRule j) {
         assertTrue(j.jenkins.getDescriptorList(NodeMonitor.class).stream()
-                .anyMatch(d -> d instanceof SpecsMonitor.DescriptorImpl));
+                .anyMatch(d -> d instanceof CpuMonitor.DescriptorImpl));
     }
 
     @Test
     void descriptorHasDisplayName(JenkinsRule j) {
-        SpecsMonitor.DescriptorImpl descriptor = ExtensionList.lookupSingleton(SpecsMonitor.DescriptorImpl.class);
+        CpuMonitor.DescriptorImpl descriptor = ExtensionList.lookupSingleton(CpuMonitor.DescriptorImpl.class);
         assertNotNull(descriptor.getDisplayName());
         assertFalse(descriptor.getDisplayName().isBlank());
     }
@@ -40,7 +40,7 @@ class SpecsMonitorTest {
      */
     @Test
     void callableReturnsResultOnAnyOs(JenkinsRule j) throws Exception {
-        SpecsMonitor.DescriptorImpl descriptor = ExtensionList.lookupSingleton(SpecsMonitor.DescriptorImpl.class);
+        CpuMonitor.DescriptorImpl descriptor = ExtensionList.lookupSingleton(CpuMonitor.DescriptorImpl.class);
 
         CpuInfo info = descriptor.createCallable(j.jenkins.toComputer()).call();
 

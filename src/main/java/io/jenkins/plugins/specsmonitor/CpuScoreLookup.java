@@ -113,13 +113,14 @@ final class CpuScoreLookup {
     }
 
     private static Map<String, BigDecimal> loadScores() {
-        try (InputStream stream = CpuScoreLookup.class.getResourceAsStream("SpecsMonitor/blender_open_data.csv")) {
+        String resourceName = "CpuMonitor/blender_open_data.csv";
+        try (InputStream stream = CpuScoreLookup.class.getResourceAsStream(resourceName)) {
             if (stream == null) {
                 return Map.of();
             }
             return parseCsv(new InputStreamReader(stream, StandardCharsets.UTF_8));
         } catch (IOException e) {
-            LOGGER.log(Level.WARNING, "Could not read CPU scores", e);
+            LOGGER.log(Level.WARNING, "Could not read CPU scores from " + resourceName, e);
             return Map.of();
         }
     }
