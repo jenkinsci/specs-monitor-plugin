@@ -4,7 +4,7 @@ AMD EPYC 9B45 128-Core Processor,2950.43
 2X Intel Xeon 6768P,2908.77
 2X AMD EPYC 9634 84-Core Processor,2780.06
 AMD Ryzen Threadripper PRO 9995WX 96-Cores,2640.38
-2X AMD EPYC 9534 64-Core Processor,2590.12
+2X AMD EPYC 9534 64-Core Processor,2601.93
 AMD Ryzen Threadripper PRO 9985WX 64-Cores,2578.83
 AMD EPYC 9645 96-Core Processor,2373.52
 AMD Ryzen Threadripper 9980X 64-Cores,2215.42
@@ -35,25 +35,25 @@ AMD Ryzen Threadripper 3970X 32-Core Processor,742.84
 AMD Ryzen 9 9950X3D2 16-Core Processor,722.11
 2X Intel Xeon Gold 6240R CPU @ 2.40GHz,712.15
 2X Intel Xeon CPU E5-2696 v4 @ 2.20GHz,704.12
+AMD Ryzen 9 9950X3D 16-Core Processor,684.9
 AMD EPYC 7642 48-Core Processor,684.3
 2X Intel Xeon Platinum 8260 CPU @ 2.40GHz,683.8
-AMD Ryzen 9 9950X3D 16-Core Processor,680.72
 Apple M3 Ultra,679.02
 AMD Ryzen Threadripper PRO 3975WX 32-Cores,672.13
-AMD Ryzen 9 9950X 16-Core Processor,662.8
+AMD Ryzen 9 9950X 16-Core Processor,663.23
 AMD Ryzen Threadripper PRO 5995WX 64-Cores,655.57
 Intel Xeon Gold 6430,652.86
 AMD Ryzen Threadripper PRO 9975WX 32-Cores,649.94
 AMD Ryzen 9 9955HX 16-Core Processor,637.67
 AMD Ryzen 9 9955HX3D 16-Core Processor,622.33
-Intel Core Ultra 7 270K Plus,619.83
+Intel Core Ultra 7 270K Plus,619.23
 2X Intel Xeon Platinum 8260L CPU @ 2.40GHz,613.25
 Intel Core i9-14900KF,595.85
 AMD RYZEN AI MAX+ PRO 395,587.65
-Apple M5 Max,584.41
+Apple M5 Max,584.57
 AMD Ryzen 9 7950X 16-Core Processor,578.38
-Intel Core Ultra 9 285K,574.38
 AMD Ryzen 9 7950X3D 16-Core Processor,574.23
+Intel Core Ultra 9 285K,574.05
 AMD EPYC 7532 32-Core Processor,569.94
 Intel Xeon w7-3455,564.84
 Intel Core Ultra 9 290HX Plus,561.26
@@ -61,13 +61,13 @@ Intel Core i9-14900KS,540.6
 2X Intel Xeon Gold 6148 CPU @ 2.40GHz,540.54
 AMD Ryzen Threadripper 3960X 24-Core Processor,537.01
 13th Gen Intel Core i9-13900K,529.8
-AMD Ryzen 9 9900X3D 12-Core Processor,527.6
-Intel Core i9-14900K,526.81
+Intel Core i9-14900K,526.48
 Intel Core i9-14900F,522.91
 2X Intel Xeon Gold 6138 CPU @ 2.00GHz,516.44
 Intel Xeon Gold 6314U CPU @ 2.30GHz,515.99
 AMD Ryzen 9 8945HX,514.64
 13th Gen Intel Core i9-13900KF,513
+AMD Ryzen 9 9900X3D 12-Core Processor,512.74
 AMD Ryzen 9 9900X 12-Core Processor,509.93
 Intel Core Ultra 9 275HX,509.77
 13th Gen Intel Core i9-13900KS,509.65
@@ -75,7 +75,7 @@ Apple M5 Pro,505.3
 Apple M2 Ultra,500.74
 AMD Ryzen 9 7945HX3D,499.42
 AMD Ryzen 9 8940HX,483.48
-Intel Core Ultra 7 265K,480.36
+Intel Core Ultra 7 265K,480.47
 AMD Ryzen 9 7945HX,475.48
 Intel Core Ultra 7 265KF,473.18
 AMD Ryzen 9 7940HX,472.33
@@ -98,6 +98,7 @@ AMD Ryzen 9 7900X3D 12-Core Processor,426.5
 AMD Ryzen 9 7900 12-Core Processor,421.37
 AMD Ryzen 9 5950X 16-Core Processor,420.03
 AMD Ryzen 9 5900XT 16-Core Processor,410.54
+"NVIDIA RTX Spark N1X (6144-core GPU, 20-core CPU)",408.79
 Intel Core Ultra 7 265,405.02
 Apple M4 Max,403.77
 AMD RYZEN AI MAX+ 392,399.83
@@ -105,16 +106,15 @@ AMD RYZEN AI MAX+ 392,399.83
 Intel Core i9-12900KS,396.03
 2X Intel Xeon CPU E5-2680 v4 @ 2.40GHz,395.19
 AMD Eng Sample: 100-000000870-32_Y,395.19
-13th Gen Intel Core i9-13980HX,391.67
+13th Gen Intel Core i9-13980HX,392.23
 13th Gen Intel Core i9-13900,388.18
 13th Gen Intel Core i9-13900HX,385.83
 13th Gen Intel Core i7-13700K,383.5
 Intel Core Ultra 7 255HX,380.47
 13th Gen Intel Core i7-13700KF,378.51
-AMD Ryzen 7 9850X3D 8-Core Processor,378.4
+AMD Ryzen 7 9850X3D 8-Core Processor,378.23
 AMD Ryzen Threadripper PRO 3955WX 16-Cores,369.7
-AMD Ryzen 7 9800X3D 8-Core Processor,368.16
-Intel Core i9-10980XE CPU @ 3.00GHz,367.8
+AMD Ryzen 7 9800X3D 8-Core Processor,368.18
 AMD RYZEN AI MAX+ 395,367.43
 Apple M1 Ultra,367.38
 AMD Ryzen Threadripper 2970WX 24-Core Processor,366.56
@@ -127,6 +127,7 @@ Intel Core i9-14900,338.48
 AMD Ryzen AI 9 HX 470,336.37
 Apple M6,335.98
 Intel Core i7-14700HX,334.13
+Intel Core i9-10980XE CPU @ 3.00GHz,333.52
 Apple M3 Max,331.25
 Intel Core Ultra 5 245KF,330.96
 Intel Core i9-12900K,330.85
@@ -176,11 +177,11 @@ Intel Core Ultra 9 285H,273.38
 Intel Core Ultra 7 356H,271.75
 Intel Core Ultra 5 245K,271.53
 13th Gen Intel Core i7-13700F,267.01
+AMD Ryzen 5 9600X 6-Core Processor,266.11
 AMD Ryzen 7 8700G,265.84
 Intel Core Ultra 7 265F,265.11
 AMD Ryzen 7 8745HX,264.85
 Intel Xeon CPU E5-2697A v4 @ 2.60GHz,264.69
-AMD Ryzen 5 9600X 6-Core Processor,264.35
 Intel Xeon CPU E5-2698 v4 @ 2.20GHz,263.71
 13th Gen Intel Core i5-13500,263.33
 AMD Ryzen AI 9 H 465,261.46
@@ -203,7 +204,7 @@ Intel Core Ultra X9 388H,243.18
 Intel Core i7-11700K @ 3.60GHz,241.99
 Snapdragon X2 Elite @ 4.03 GHz,241.65
 AMD Ryzen 7 8845HS,241.17
-Apple M5,240.35
+Apple M5,240.59
 AMD Ryzen 7 PRO 8845HS,240.16
 Intel Core i9-11900KF @ 3.50GHz,239.97
 Intel Core i5-12600K,237.13
@@ -214,7 +215,7 @@ Intel Core i9-9920X CPU @ 3.50GHz,232.97
 2X Intel Xeon CPU E5-4620 v4 @ 2.10GHz,229.38
 AMD Ryzen 7 H 255,228.42
 Intel Core Ultra 5 230F,227.12
-AMD Ryzen 7 5800X3D 8-Core Processor,225.31
+AMD Ryzen 7 5800X3D 8-Core Processor,226.07
 AMD Ryzen AI 7 350,223.85
 Intel Core Ultra 5 225,223.69
 Intel Core i9-10900KF CPU @ 3.70GHz,223.17
@@ -242,6 +243,7 @@ Apple M4,213.18
 Intel Core i5-14400,213.12
 Intel Xeon W-2175 CPU @ 2.50GHz,212.9
 Intel Core i5-14400F,212.82
+AMD Ryzen 5 7500F 6-Core Processor,212.77
 Intel Xeon CPU E5-2690 v4 @ 2.60GHz,211.72
 AMD Ryzen 5 7600 6-Core Processor,211.38
 AMD Ryzen 9 270,210.8
@@ -262,32 +264,31 @@ Intel Core Ultra 9 185H,204.97
 Intel Core i5-14500HX,204.89
 AMD Ryzen AI 7 PRO 450,204.6
 13th Gen Intel Core i9-13900H,203.03
-AMD Ryzen 5 7500F 6-Core Processor,202.88
+Apple M1 Max,202.89
 2X Intel Xeon CPU E5-2667 v3 @ 3.20GHz,202.28
 13th Gen Intel Core i5-13450HX,201.76
 Intel Core i7-6950X CPU @ 3.00GHz,201.58
 AMD Ryzen 7 PRO 7840U,201.01
 13th Gen Intel Core i7-13850HX,199.84
-Apple M1 Max,199.83
 Intel Core Ultra X7 368H,197.84
 13th Gen Intel Core i5-13400F,197.62
 AMD Ryzen 7 5700G,196.52
 Intel Core i7-10700K CPU @ 3.80GHz,196.14
 Intel Xeon W-2255 CPU @ 3.70GHz,195.35
-AMD Ryzen 7 7840U,193.16
 AMD Ryzen 7 3800X 8-Core Processor,192.39
 Intel Core Ultra 5 225T,191.86
 Intel Xeon CPU E5-2682 v4 @ 2.50GHz,191.84
 Apple M2 Pro,191.32
+AMD Ryzen 7 7840U,191.21
 Intel Core i7-10700KF CPU @ 3.80GHz,190.72
 AMD Ryzen 7 7840H,189.99
 AMD Ryzen 7 5700,188.99
 AMD Ryzen 5 8600G,188.64
-Intel Core i7-12700H,187.37
-Apple M1 Pro,186.14
 Intel Core i9-12900H,185.53
 AMD Ryzen 5 8400F 6-Core Processor,185.52
+Apple M1 Pro,184.2
 Intel Core i9-9900K CPU @ 3.60GHz,183.3
+Intel Core i7-12700H,181.99
 Intel Core Ultra 5 225H,181.2
 Intel Core i7-12800H,179.24
 AMD Ryzen 7 7435HS,177.5
@@ -313,12 +314,12 @@ Intel Core i5-12400F,168.03
 Intel Xeon CPU E5-2670 v3 @ 2.30GHz,167.53
 Intel Core i9-12950HX,167.47
 Intel Core i7-12650HX,167.43
-AMD BC-250,166.73
 AMD Ryzen 5 5600XT 6-Core Processor,166.2
 AMD Ryzen 7 170,165.72
 AMD Ryzen 7 5800HS,164.69
 Snapdragon X - X126100 - Qualcomm Oryon CPU,164.28
 AMD Ryzen 9 6900HS,164.16
+Intel Core Ultra 7 155H,163.95
 Snapdragon X2 Plus - X2P42100 - Qualcomm Oryon CPU,163.79
 Intel Core i5-14450HX,163.06
 AMD Ryzen 7 5800H,162.59
@@ -348,6 +349,7 @@ Intel Core i7-1270P,148.26
 AMD Ryzen 5 8645HS,148.07
 AMD Ryzen 5 5600GT,146.76
 2X Intel Xeon Gold 5122 CPU @ 3.60GHz,146.04
+AMD BC-250,145.13
 Intel Core i5-11400 @ 2.60GHz,144.25
 AMD Ryzen Z1 Extreme,144.03
 AMD Ryzen 7 5700U,143.79
@@ -358,7 +360,6 @@ Intel Core i5-11400F @ 2.60GHz,141.72
 AMD Ryzen 5 5500,141.66
 AMD Ryzen 7 4800H,141.14
 AMD Ryzen 5 3600X 6-Core Processor,140.37
-Intel Core Ultra 7 155H,138.97
 Intel Core Ultra 5 125H,138.24
 AMD Ryzen 7 2700 Eight-Core Processor,138.13
 13th Gen Intel Core i5-13500H,137.97
@@ -415,10 +416,10 @@ AMD Ryzen 5 6600H,112.01
 Intel Core i7-8700 CPU @ 3.20GHz,110.77
 Intel Core i7-6850K CPU @ 3.60GHz,110.74
 Intel Core i7-1260P,110.67
+AMD Ryzen 5 7430U,110.35
 Intel Core Ultra 5 226V,110.14
 AMD Ryzen 5 PRO 4650G,110.13
 AMD Ryzen 5 7530U,109.23
-AMD Ryzen 5 7430U,108.78
 Intel Core i7-5960X CPU @ 3.00GHz,108.1
 Intel Xeon W-2235 CPU @ 3.80GHz,107.81
 Intel Core i3-12100F,107.26
@@ -465,6 +466,7 @@ Intel Core i5-8600K CPU @ 3.60GHz,81.89
 Intel Core i7-9750H CPU @ 2.60GHz,81.07
 AMD Ryzen 5 3400G,81.05
 Intel Xeon Platinum 8370C CPU @ 2.80GHz,80.96
+Intel Core i7-7700 CPU @ 3.60GHz,80.71
 AMD Ryzen 5 2400G,80.56
 AMD Ryzen 3 PRO 4350G,79.5
 Intel Core i7-9750HF CPU @ 2.60GHz,78.97
@@ -472,7 +474,6 @@ Intel Core i7-10875H CPU @ 2.30GHz,78.88
 Intel Core i7-10710U CPU @ 1.10GHz,78.75
 Intel Core i7-1068NG7 CPU @ 2.30GHz,78.32
 Intel Core i3-1215U,77.96
-Intel Core i7-7700 CPU @ 3.60GHz,77.66
 Intel Core i7-8750H CPU @ 2.20GHz,77.6
 Intel Core i7-9850H CPU @ 2.60GHz,77.41
 Intel Xeon CPU E3-1245 v6 @ 3.70GHz,76.72
@@ -570,6 +571,7 @@ Intel Core i7-8565U CPU @ 1.80GHz,36.34
 AMD FX(tm)-6350 Six-Core Processor,35.98
 Intel Xeon W-2102 CPU @ 2.90GHz,35.93
 Intel Core i5-1145G7 @ 2.60GHz,35.6
+Intel Core Ultra 5 134U,34.91
 Intel Core i7-10510U CPU @ 1.80GHz,34.84
 Intel Xeon CPU           X5670  @ 2.93GHz,34.33
 Intel Core i3-10110U CPU @ 2.10GHz,34.18
