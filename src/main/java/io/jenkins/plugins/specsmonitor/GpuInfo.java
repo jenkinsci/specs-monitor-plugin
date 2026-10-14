@@ -15,6 +15,23 @@ public class GpuInfo implements Serializable {
             "(?i)\\b(?:VGA compatible controller|3D controller|Display controller):\\s*(.+?)(?:\\s+\\(rev [^)]+\\))?$");
     private static final Pattern MAC_CHIPSET = Pattern.compile("^\\s*Chipset Model: (.+?)\\s*$");
     private static final Pattern WINDOWS_ADAPTER = Pattern.compile("^(.+?)\\t(.*)$");
+    private static final Pattern NVIDIA_QUADRO_MODEL =
+            Pattern.compile("\\bQuadro\\s+(?:RTX\\s+A?\\d{3,4}|P\\d{4})\\b", Pattern.CASE_INSENSITIVE);
+    private static final Pattern NVIDIA_MODEL = Pattern.compile(
+            "\\b(?:RTX|GTX)\\s+A?\\d{3,4}M?(?:\\s+(?:Ti|SUPER))?(?:\\s+Laptop)?(?:\\s+(?:Max-Q|with\\s+Max-Q\\s+Design))?\\b",
+            Pattern.CASE_INSENSITIVE);
+    private static final Pattern NVIDIA_ACCELERATOR =
+            Pattern.compile("\\bTesla\\s+P?V?\\d{2,3}\\b", Pattern.CASE_INSENSITIVE);
+    private static final Pattern AMD_MODEL = Pattern.compile(
+            "\\b(?:RX\\s*(?:\\d{4}(?:M|S)?|Vega\\s+M\\s+GL)(?:\\s+(?:XT|XTX|GRE|S))?|AI\\s+PRO\\s+R\\d+|Pro\\s+WX\\s+\\d+|Instinct\\s+MI\\d+[A-Z]?)\\b",
+            Pattern.CASE_INSENSITIVE);
+    private static final Pattern INTEL_ARC_MODEL =
+            Pattern.compile("\\bArc\\s+(?:Pro\\s+)?[A-Z]?\\d{1,3}[A-Z]?\\b", Pattern.CASE_INSENSITIVE);
+    private static final Pattern INTEL_DATA_CENTER_MODEL =
+            Pattern.compile("\\b(?:Max|Flex)\\s+\\d{2,4}\\b", Pattern.CASE_INSENSITIVE);
+    private static final Pattern TRADEMARK = Pattern.compile("\\((?:R|TM)\\)", Pattern.CASE_INSENSITIVE);
+    private static final Pattern VENDOR_PREFIX = Pattern.compile(
+            "(?i)^\\s*(?:(?:NVIDIA|Intel|AMD)(?:\\s+Corporation)?|Advanced Micro Devices(?:, Inc\\.)?)(?:\\s+\\[AMD/ATI\\])?\\s*");
 
     private final String name;
 
@@ -35,11 +52,59 @@ public class GpuInfo implements Serializable {
     }
 
     public String getDisplay() {
-        return getName();
+        return getShortName();
+    }
+
+    public String getShortName() {
+        String cleanedName = TRADEMARK.matcher(name).replaceAll("");
+        String model = findModel(NVIDIA_QUADRO_MODEL, cleanedName);
+        if (model == null) {
+            model = findModel(NVIDIA_MODEL, cleanedName);
+        }
+        if (model == null) {
+            model = findModel(NVIDIA_ACCELERATOR, cleanedName);
+        }
+        if (model == null) {
+            model = findModel(AMD_MODEL, cleanedName);
+        }
+        if (model == null) {
+            model = findModel(INTEL_ARC_MODEL, cleanedName);
+        }
+        if (model == null) {
+            model = findModel(INTEL_DATA_CENTER_MODEL, cleanedName);
+        }
+        if (model != null) {
+            return normalizeModel(model.replaceFirst("(?i)\\s+with\\s+Max-Q\\s+Design$", " Max-Q"));
+        }
+        cleanedName = VENDOR_PREFIX.matcher(cleanedName).replaceFirst("");
+        return cleanedName.replaceAll("\\s+", " ").trim();
     }
 
     public String getTooltip() {
         return getName();
+    }
+
+    private static String findModel(Pattern pattern, String name) {
+        Matcher matcher = pattern.matcher(name);
+        return matcher.find() ? matcher.group() : null;
+    }
+
+    private static String normalizeModel(String model) {
+        int separator = model.indexOf(' ');
+        String family = separator < 0 ? model : model.substring(0, separator);
+        String normalizedFamily =
+                switch (family.toLowerCase(Locale.ROOT)) {
+                    case "arc" -> "Arc";
+                    case "max" -> "Max";
+                    case "flex" -> "Flex";
+                    case "quadro" -> "Quadro";
+                    case "tesla" -> "Tesla";
+                    case "instinct" -> "Instinct";
+                    case "pro" -> "Pro";
+                    default -> family.toUpperCase(Locale.ROOT);
+                };
+        String normalized = separator < 0 ? normalizedFamily : normalizedFamily + model.substring(separator);
+        return normalized.replaceAll("(?i)\\bSUPER\\b", "SUPER");
     }
 
     static GpuInfo fromNvidiaSmi(String output) {

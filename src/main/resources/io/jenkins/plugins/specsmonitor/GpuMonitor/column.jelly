@@ -4,7 +4,7 @@
   <j:set var="data" value="${from.data(comp)}"/>
   <td tooltip="${data.tooltip}">
     <j:choose>
-      <j:when test="${data != null}">${data.display}</j:when>
+      <j:when test="${data != null}">${data.shortName}</j:when>
       <j:otherwise><span class="jenkins-!-warning-color">N/A</span></j:otherwise>
     </j:choose>
   </td>
