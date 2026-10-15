@@ -70,6 +70,13 @@ the time of the last refresh. When free memory drops below a configurable percen
 maximum heap (default 10%), the value is shown in yellow with a warning symbol. Set the threshold
 in the monitor's configuration (`warnBelowPercent` in Configuration as Code).
 
+## Uptime monitor
+
+The **Uptime** monitor shows how long the machine of every node has been running since its last boot,
+for example `3d 4h`. Hovering over the value shows the full duration. It reads PowerShell on
+Windows, `/proc/uptime` on Linux and `sysctl kern.boottime` on macOS. Otherwise, or if the lookup
+fails, it shows the uptime of the agent process.
+
 ## GPU monitor
 
 The **GPU** monitor shows the first graphics processor model returned by the OS inventory for each
@@ -81,7 +88,7 @@ GPU information show `N/A`.
 
 1. Install the plugin.
 2. Go to **Manage Jenkins → Nodes → Configure Monitors** (gear icon).
-3. Enable **CPU**, **Free RAM**, **Free JVM Memory** and/or **GPU**.
+3. Enable **CPU**, **Free RAM**, **Free JVM Memory**, **GPU** and/or **Uptime**.
 4. A CPU column appears in the node list, for example `i7-13700K (16 threads)`.
 
 ### Configuration as Code
@@ -93,6 +100,7 @@ jenkins:
     - memoryMonitor
     - jvmMemoryMonitor
     - gpuMonitor
+    - uptimeMonitor
 ```
 
 ## Issues
