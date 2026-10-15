@@ -59,6 +59,13 @@ is free out of the total (for example `43.5 GiB free of 63.7 GiB`) at the time o
 
 The Linux value is the memory the kernel can use, which is slightly less than the installed amount.
 
+## JVM memory monitor
+
+The **Free JVM Memory** monitor shows the free memory of the Java virtual machine running on every
+node, for example `1.6 GiB`. Free memory is the maximum heap size minus the heap in use. Hovering
+over the value shows how much is free out of the maximum (for example `1.6 GiB free of 2 GiB`) at
+the time of the last refresh.
+
 ## GPU monitor
 
 The **GPU** monitor shows the first graphics processor model returned by the OS inventory for each
@@ -70,7 +77,7 @@ GPU information show `N/A`.
 
 1. Install the plugin.
 2. Go to **Manage Jenkins → Nodes → Configure Monitors** (gear icon).
-3. Enable **CPU**, **Free RAM** and/or **GPU**.
+3. Enable **CPU**, **Free RAM**, **Free JVM Memory** and/or **GPU**.
 4. A CPU column appears in the node list, for example `i7-13700K (16 threads)`.
 
 ### Configuration as Code
@@ -80,6 +87,7 @@ jenkins:
   nodeMonitors:
     - cpuMonitor
     - memoryMonitor
+    - jvmMemoryMonitor
     - gpuMonitor
 ```
 
