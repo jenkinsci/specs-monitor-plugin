@@ -1,0 +1,44 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout">
+  <!-- Evaluated first: it checks the permission before anything is rendered. -->
+  <j:set var="target" value="${it.target}"/>
+  <l:layout title="Remote Access">
+    <st:include page="sidepanel.jelly" it="${it.computer}"/>
+    <l:main-panel>
+      <h1>Remote Access</h1>
+      <j:choose>
+        <j:when test="${it.computer.offline}">
+          <p>The node is offline, so its address is not known.</p>
+        </j:when>
+        <j:when test="${target == null or target.ip == null}">
+          <p>The address of the node could not be determined.</p>
+        </j:when>
+        <j:when test="${target.windows}">
+          <p>
+            Opens a <b>Remote Desktop connection</b> for ${target.ip}.
+          </p>
+          <br />
+          <p>Download and open Remote Desktop manually: <a class="jenkins-button jenkins-button--primary" href="rdp">Download .rdp file</a></p>
+          <br />
+          <p>Open Remote Desktop directly: <a class="jenkins-button" href="${target.rdpUri}">Open rdp:// link</a></p>
+          <p class="jenkins-description">
+            The <code>rdp://</code> link only works if a client that handles it is installed, such as the
+            Microsoft Remote Desktop or Windows App client. The built-in Windows client does not, so use the
+            download there.
+          </p>
+        </j:when>
+        <j:when test="${target.sshCapable}">
+          <p>
+            Opens the SSH client registered on your computer for ${target.ip}. If nothing happens, run
+            this command in a terminal:
+          </p>
+          <p><code>${target.sshCommand}</code></p>
+          <a class="jenkins-button jenkins-button--primary" href="${target.sshUri}">Connect with SSH</a>
+        </j:when>
+        <j:otherwise>
+          <p>Remote Access is only offered for Windows, Linux and macOS nodes.</p>
+        </j:otherwise>
+      </j:choose>
+    </l:main-panel>
+  </l:layout>
+</j:jelly>

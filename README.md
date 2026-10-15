@@ -85,6 +85,16 @@ The IP address of the node follows in parentheses, for example `WebSocket (192.1
 the address the node uses for its default route, falling back to a private IPv4 address of its
 network interfaces. The value is only reported while the node is online. Other launch methods are shown by their class name.
 
+## Remote access
+
+Each node's page has a **Remote access** link in its sidebar (requires the *Configure* permission on
+the node). For Windows nodes it offers **Download .rdp file**, which opens in Remote Desktop Connection, and
+**Open rdp:// link**, which needs a client that handles `rdp://` (for example the Microsoft Remote
+Desktop or Windows App client; the built-in Windows client does not). For Linux and macOS nodes it offers **Connect with SSH**, an `ssh://`
+link that opens the SSH client registered on your computer, plus the `ssh` command to copy. The
+node must be online, and the address is the one the node itself reports (see the Connection
+monitor). Credentials are never stored or sent by Jenkins.
+
 ## GPU monitor
 
 The **GPU** monitor shows the first graphics processor model returned by the OS inventory for each
