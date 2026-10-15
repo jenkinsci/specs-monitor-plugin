@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This plugin adds node monitors to the Jenkins node list for **CPU**, **Free RAM** and **GPU**.
+This plugin adds node monitors to the Jenkins node list for **CPU**, **Free RAM**, **GPU**, **Free JVM Memory**, **Uptime**, and **Connection**.
 The CPU monitor shows the CPU model and the number of hardware threads (logical processors) of every
 node (built-in node and agents). This makes it easy to see which agents are fast or slow without opening each machine.
 When a CPU matches, the column also shows its median CPU benchmark score from [Blender Open Data](https://opendata.blender.org/benchmarks/query/?compute_type=CPU&blender_version=5.2.0&group_by=device_name).
