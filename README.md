@@ -81,8 +81,9 @@ fails, it shows the uptime of the agent process.
 
 The **Connection** monitor shows how each node is connected to the controller: `WebSocket` or `JNLP`
 (inbound agents over the TCP agent port), `SSH`, `Command`, or `Built-in` for the controller itself.
-The value comes from the launch method configured for the node and is only reported while the node
-is online. Other launch methods are shown by their class name.
+The IP address of the node follows in parentheses, for example `WebSocket (192.168.1.20)`. It is
+the address the node uses for its default route, falling back to a private IPv4 address of its
+network interfaces. The value is only reported while the node is online. Other launch methods are shown by their class name.
 
 ## GPU monitor
 

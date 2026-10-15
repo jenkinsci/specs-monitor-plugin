@@ -1,8 +1,8 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core">
-  <td align="right" data="${data.display}" tooltip="${data.tooltip}">
+  <td align="right" data="${data.label}" tooltip="${data.tooltip}">
     <j:choose>
-      <j:when test="${data != null}">${data.display}</j:when>
+      <j:when test="${data != null}">${data.label}</j:when>
       <j:otherwise>N/A</j:otherwise>
     </j:choose>
   </td>

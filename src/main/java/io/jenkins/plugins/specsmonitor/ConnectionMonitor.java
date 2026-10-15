@@ -25,7 +25,7 @@ public class ConnectionMonitor extends NodeMonitor {
 
         /**
          * The connection is determined here on the controller from the launch method and handed to
-         * the callable, which only reports it back once the node is online.
+         * the callable, which adds the node's IP address and reports it back once the node is online.
          */
         @Override
         protected MasterToSlaveCallable<ConnectionInfo, IOException> createCallable(Computer c) {
@@ -61,7 +61,8 @@ public class ConnectionMonitor extends NodeMonitor {
 
         @Override
         public ConnectionInfo call() {
-            return info;
+            // Runs on the node, so the address is the one of the node itself.
+            return info.withIp(IpAddressFinder.find());
         }
     }
 }

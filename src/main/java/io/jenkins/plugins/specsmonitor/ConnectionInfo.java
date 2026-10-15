@@ -12,18 +12,43 @@ public class ConnectionInfo implements Serializable {
 
     private final String display;
     private final String tooltip;
+    private final String ip;
 
     public ConnectionInfo(String display, String tooltip) {
-        this.display = display;
-        this.tooltip = tooltip;
+        this(display, tooltip, null);
     }
 
+    private ConnectionInfo(String display, String tooltip, String ip) {
+        this.display = display;
+        this.tooltip = tooltip;
+        this.ip = ip;
+    }
+
+    /** The connection type only, e.g. {@code WebSocket}. */
     public String getDisplay() {
         return display;
     }
 
+    /** IP address of the node, or {@code null} if unknown. */
+    public String getIp() {
+        return ip;
+    }
+
+    /** The connection type followed by the IP address if known, e.g. {@code WebSocket (10.0.0.5)}. */
+    public String getLabel() {
+        return ip == null ? display : display + " (" + ip + ")";
+    }
+
     public String getTooltip() {
-        return tooltip;
+        if (ip == null) {
+            return tooltip;
+        }
+        return tooltip.isEmpty() ? "IP address: " + ip : tooltip + ". IP address: " + ip;
+    }
+
+    /** Returns a copy of this connection that also reports the given IP address. */
+    ConnectionInfo withIp(String ip) {
+        return new ConnectionInfo(display, tooltip, ip);
     }
 
     /**
@@ -61,6 +86,6 @@ public class ConnectionInfo implements Serializable {
 
     @Override
     public String toString() {
-        return display;
+        return getLabel();
     }
 }
