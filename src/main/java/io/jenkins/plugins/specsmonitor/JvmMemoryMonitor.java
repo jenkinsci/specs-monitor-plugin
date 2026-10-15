@@ -8,6 +8,7 @@ import java.io.IOException;
 import jenkins.security.MasterToSlaveCallable;
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
 
 /**
  * Node monitor that reports the free memory of the JVM running on each node,
@@ -15,8 +16,31 @@ import org.kohsuke.stapler.DataBoundConstructor;
  */
 public class JvmMemoryMonitor extends NodeMonitor {
 
+    /** Default for {@link #getWarnBelowPercent()}. */
+    public static final int DEFAULT_WARN_BELOW_PERCENT = 10;
+
+    private int warnBelowPercent = DEFAULT_WARN_BELOW_PERCENT;
+
     @DataBoundConstructor
     public JvmMemoryMonitor() {}
+
+    /** Free memory below this percentage of the maximum heap is highlighted as a warning. */
+    public int getWarnBelowPercent() {
+        return warnBelowPercent;
+    }
+
+    @DataBoundSetter
+    public void setWarnBelowPercent(int warnBelowPercent) {
+        this.warnBelowPercent = Math.max(0, Math.min(100, warnBelowPercent));
+    }
+
+    /** Whether the free memory in {@code info} is below the configured threshold. */
+    public boolean isLow(MemoryInfo info) {
+        if (info == null || info.getTotalBytes() <= 0 || info.getFreeBytes() < 0) {
+            return false;
+        }
+        return info.getFreeBytes() * 100.0 / info.getTotalBytes() < warnBelowPercent;
+    }
 
     @Extension
     @Symbol("jvmMemoryMonitor")
@@ -30,6 +54,10 @@ public class JvmMemoryMonitor extends NodeMonitor {
         @Override
         public String getDisplayName() {
             return Messages.jvmMemoryMonitor_displayName();
+        }
+
+        public int getDefaultWarnBelowPercent() {
+            return DEFAULT_WARN_BELOW_PERCENT;
         }
 
         /**

@@ -43,4 +43,15 @@ class JvmMemoryMonitorTest {
         assertTrue(info.getFreeBytes() <= info.getTotalBytes());
         assertTrue(info.getTooltip().contains(" free of "));
     }
+
+    @Test
+    void isLowWhenFreeBelowThreshold(JenkinsRule j) {
+        JvmMemoryMonitor monitor = new JvmMemoryMonitor();
+        monitor.setWarnBelowPercent(10);
+
+        assertTrue(monitor.isLow(new MemoryInfo(1000, 99, 99)));
+        assertFalse(monitor.isLow(new MemoryInfo(1000, 100, 100)));
+        assertFalse(monitor.isLow(new MemoryInfo(0)));
+        assertFalse(monitor.isLow(null));
+    }
 }

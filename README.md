@@ -50,7 +50,9 @@ the column also shows the median benchmark score for that hardware.
 
 A second monitor, **Free RAM**, shows the available or free memory (RAM) of every node as a
 separate column, for example `15.6 GiB`. Sizes use binary units (1 GiB = 1024 MiB). Hovering over the value shows how much memory
-is free out of the total (for example `43.5 GiB free of 63.7 GiB`) at the time of the last refresh.
+is free out of the total (for example `43.5 GiB free of 63.7 GiB`) at the time of the last refresh. When the value drops below a configurable percentage of the
+total (default 10%), it is shown in yellow with a warning symbol. Set the threshold in the
+monitor's configuration (`warnBelowPercent` in Configuration as Code).
 
 - Windows: `Win32_ComputerSystem.TotalPhysicalMemory` (PowerShell)
 - Linux: `MemTotal` from `/proc/meminfo`
@@ -64,7 +66,9 @@ The Linux value is the memory the kernel can use, which is slightly less than th
 The **Free JVM Memory** monitor shows the free memory of the Java virtual machine running on every
 node, for example `1.6 GiB`. Free memory is the maximum heap size minus the heap in use. Hovering
 over the value shows how much is free out of the maximum (for example `1.6 GiB free of 2 GiB`) at
-the time of the last refresh.
+the time of the last refresh. When free memory drops below a configurable percentage of the
+maximum heap (default 10%), the value is shown in yellow with a warning symbol. Set the threshold
+in the monitor's configuration (`warnBelowPercent` in Configuration as Code).
 
 ## GPU monitor
 

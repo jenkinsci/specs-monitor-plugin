@@ -1,0 +1,7 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
+  <f:entry title="Warn below (%)" field="warnBelowPercent"
+           description="Highlight the value when free memory is below this percentage of the total.">
+    <f:number min="0" max="100" default="${descriptor.defaultWarnBelowPercent}"/>
+  </f:entry>
+</j:jelly>

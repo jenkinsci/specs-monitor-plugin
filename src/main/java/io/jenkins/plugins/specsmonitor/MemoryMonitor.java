@@ -16,6 +16,7 @@ import java.util.logging.Logger;
 import jenkins.security.MasterToSlaveCallable;
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
 
 /**
  * Node monitor that reports the total physical memory (RAM) of each node, with
@@ -23,8 +24,31 @@ import org.kohsuke.stapler.DataBoundConstructor;
  */
 public class MemoryMonitor extends NodeMonitor {
 
+    /** Default for {@link #getWarnBelowPercent()}. */
+    public static final int DEFAULT_WARN_BELOW_PERCENT = 10;
+
+    private int warnBelowPercent = DEFAULT_WARN_BELOW_PERCENT;
+
     @DataBoundConstructor
     public MemoryMonitor() {}
+
+    /** Free memory below this percentage of the total is highlighted as a warning. */
+    public int getWarnBelowPercent() {
+        return warnBelowPercent;
+    }
+
+    @DataBoundSetter
+    public void setWarnBelowPercent(int warnBelowPercent) {
+        this.warnBelowPercent = Math.max(0, Math.min(100, warnBelowPercent));
+    }
+
+    /** Whether the usable memory in {@code info} is below the configured threshold. */
+    public boolean isLow(MemoryInfo info) {
+        if (info == null || info.getTotalBytes() <= 0 || info.getUsableBytes() < 0) {
+            return false;
+        }
+        return info.getUsableBytes() * 100.0 / info.getTotalBytes() < warnBelowPercent;
+    }
 
     @Extension
     @Symbol("memoryMonitor")
@@ -38,6 +62,10 @@ public class MemoryMonitor extends NodeMonitor {
         @Override
         public String getDisplayName() {
             return Messages.memoryMonitor_displayName();
+        }
+
+        public int getDefaultWarnBelowPercent() {
+            return DEFAULT_WARN_BELOW_PERCENT;
         }
 
         /**

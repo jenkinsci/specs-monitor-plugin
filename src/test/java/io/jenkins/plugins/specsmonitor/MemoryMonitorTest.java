@@ -43,4 +43,16 @@ class MemoryMonitorTest {
         assertNotNull(info);
         assertTrue(info.getTotalBytes() > 0);
     }
+
+    @Test
+    void isLowWhenUsableBelowThreshold(JenkinsRule j) {
+        MemoryMonitor monitor = new MemoryMonitor();
+        monitor.setWarnBelowPercent(10);
+
+        assertTrue(monitor.isLow(new MemoryInfo(1000, 500, 99)));
+        assertFalse(monitor.isLow(new MemoryInfo(1000, 50, 100)));
+        assertTrue(monitor.isLow(new MemoryInfo(1000, 99, -1)));
+        assertFalse(monitor.isLow(new MemoryInfo(1000)));
+        assertFalse(monitor.isLow(null));
+    }
 }
