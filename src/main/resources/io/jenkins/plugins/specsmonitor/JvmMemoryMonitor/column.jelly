@@ -1,6 +1,6 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core">
-  <j:set var="low" value="${it.isLow(data)}"/>
+  <j:set var="low" value="${from.isLow(data)}"/>
   <td align="right" data="${data.usableBytes}" tooltip="${data.tooltip}">
     <j:choose>
       <j:when test="${data == null}">N/A</j:when>

@@ -11,6 +11,9 @@ public class VersionInfo implements Serializable {
     /** The numeric part of a version followed by a {@code .v<hash>} suffix, as used by remoting. */
     private static final Pattern HASH_SUFFIX = Pattern.compile("^(\\d+(?:\\.\\d+)*)\\.v.*$");
 
+    /** The output of {@code git --version}: group 1 is the full version, group 2 the numeric version. */
+    private static final Pattern GIT_VERSION = Pattern.compile("git version ((\\d+(?:\\.\\d+)*)[^\\r\\n]*)");
+
     private static final Pattern NUMBERS = Pattern.compile("\\d+(?:\\.\\d+)*");
 
     private final String display;
@@ -57,6 +60,22 @@ public class VersionInfo implements Serializable {
         }
         Matcher matcher = HASH_SUFFIX.matcher(version);
         return new VersionInfo(matcher.matches() ? matcher.group(1) : version, version);
+    }
+
+    /**
+     * The output of {@code git --version}, e.g. {@code git version 2.43.0.windows.1}, as
+     * {@code 2.43.0} with {@code 2.43.0.windows.1} as tooltip. Unknown if the output is not
+     * recognized, for example because Git is not installed.
+     */
+    static VersionInfo fromGit(String output) {
+        if (output == null) {
+            return new VersionInfo(null, null);
+        }
+        Matcher matcher = GIT_VERSION.matcher(output.trim());
+        if (!matcher.lookingAt()) {
+            return new VersionInfo(null, null);
+        }
+        return new VersionInfo(matcher.group(2), matcher.group(1).trim());
     }
 
     /** Whether the first number (the JVM feature release) is lower than {@code other}'s. */

@@ -1,7 +1,7 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core">
-  <j:set var="outdated" value="${it.isOutdated(data)}"/>
-  <td align="right" data="${data.display}" tooltip="${it.getTooltip(data)}">
+  <j:set var="outdated" value="${from.isOutdated(data)}"/>
+  <td align="right" data="${data.display}" tooltip="${from.getTooltip(data)}">
     <j:choose>
       <j:when test="${data == null}">N/A</j:when>
       <j:when test="${outdated}">

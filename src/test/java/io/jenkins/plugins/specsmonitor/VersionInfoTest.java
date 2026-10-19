@@ -68,6 +68,39 @@ class VersionInfoTest {
     }
 
     @Test
+    void gitShowsNumbersWithFullVersionAsTooltip() {
+        VersionInfo info = VersionInfo.fromGit("git version 2.43.0.windows.1\n");
+
+        assertEquals("2.43.0", info.getDisplay());
+        assertEquals("2.43.0.windows.1", info.getTooltip());
+    }
+
+    @Test
+    void gitKeepsVendorSuffixInTooltip() {
+        VersionInfo info = VersionInfo.fromGit("git version 2.39.5 (Apple Git-154)");
+
+        assertEquals("2.39.5", info.getDisplay());
+        assertEquals("2.39.5 (Apple Git-154)", info.getTooltip());
+    }
+
+    @Test
+    void gitOutputThatIsNotAVersionIsUnknown() {
+        assertEquals("N/A", VersionInfo.fromGit("").getDisplay());
+        assertEquals("N/A", VersionInfo.fromGit(null).getDisplay());
+        assertEquals("N/A", VersionInfo.fromGit("'git' is not recognized").getDisplay());
+    }
+
+    @Test
+    void gitComparesComponentWise() {
+        VersionInfo old = VersionInfo.fromGit("git version 2.39.5");
+        VersionInfo current = VersionInfo.fromGit("git version 2.43.0.windows.1");
+
+        assertTrue(old.isOlderThan(current));
+        assertFalse(current.isOlderThan(old));
+        assertFalse(VersionInfo.fromGit("git version 2.43").isOlderThan(VersionInfo.fromGit("git version 2.43.0")));
+    }
+
+    @Test
     void unknownVersionsAreNeverOlder() {
         VersionInfo unknown = VersionInfo.fromRemoting(null);
         VersionInfo known = VersionInfo.fromRemoting("3352.v17a_fb_4b_2773f");
