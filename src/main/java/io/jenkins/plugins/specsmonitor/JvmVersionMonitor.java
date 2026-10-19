@@ -18,6 +18,27 @@ public class JvmVersionMonitor extends NodeMonitor {
     @DataBoundConstructor
     public JvmVersionMonitor() {}
 
+    /** The version of the JVM running the controller. */
+    private static VersionInfo controllerVersion() {
+        return VersionInfo.fromJvm(Runtime.version());
+    }
+
+    /** Whether the node runs an older Java feature release (e.g. 17 versus 21) than the controller. */
+    public boolean isOutdated(VersionInfo info) {
+        return info != null && info.isFeatureOlderThan(controllerVersion());
+    }
+
+    /** The full version, with the controller's version added if the node is outdated. */
+    public String getTooltip(VersionInfo info) {
+        if (info == null) {
+            return "";
+        }
+        return isOutdated(info)
+                ? info.getTooltip() + " (older than the controller: "
+                        + controllerVersion().getTooltip() + ")"
+                : info.getTooltip();
+    }
+
     @Extension
     @Symbol("jvmVersionMonitor")
     public static class DescriptorImpl extends AbstractAsyncNodeMonitorDescriptor<VersionInfo> {

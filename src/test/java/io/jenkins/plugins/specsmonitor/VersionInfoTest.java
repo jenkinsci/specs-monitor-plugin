@@ -1,6 +1,8 @@
 package io.jenkins.plugins.specsmonitor;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
@@ -41,6 +43,39 @@ class VersionInfoTest {
     @Test
     void remotingKeepsUnrecognizedVersion() {
         assertEquals("unknown", VersionInfo.fromRemoting("unknown").getDisplay());
+    }
+
+    @Test
+    void jvmFeatureComparisonIgnoresLaterComponents() {
+        VersionInfo jvm17 = VersionInfo.fromJvm(Runtime.Version.parse("17.0.12+7"));
+        VersionInfo jvm21 = VersionInfo.fromJvm(Runtime.Version.parse("21.0.1+12"));
+        VersionInfo jvm21Newer = VersionInfo.fromJvm(Runtime.Version.parse("21.0.9+1"));
+
+        assertTrue(jvm17.isFeatureOlderThan(jvm21));
+        assertFalse(jvm21.isFeatureOlderThan(jvm17));
+        assertFalse(jvm21.isFeatureOlderThan(jvm21Newer));
+    }
+
+    @Test
+    void remotingComparesComponentWise() {
+        VersionInfo old = VersionInfo.fromRemoting("3352.v17a_fb_4b_2773f");
+        VersionInfo twoNumbers = VersionInfo.fromRemoting("3355.3357.v931d3c992987");
+
+        assertTrue(old.isOlderThan(twoNumbers));
+        assertFalse(twoNumbers.isOlderThan(old));
+        assertFalse(twoNumbers.isOlderThan(VersionInfo.fromRemoting("3355.3357.vabcdef")));
+        assertTrue(VersionInfo.fromRemoting("3355.v1").isOlderThan(twoNumbers));
+    }
+
+    @Test
+    void unknownVersionsAreNeverOlder() {
+        VersionInfo unknown = VersionInfo.fromRemoting(null);
+        VersionInfo known = VersionInfo.fromRemoting("3352.v17a_fb_4b_2773f");
+
+        assertFalse(unknown.isOlderThan(known));
+        assertFalse(known.isOlderThan(unknown));
+        assertFalse(VersionInfo.fromRemoting("unknown").isOlderThan(known));
+        assertFalse(unknown.isFeatureOlderThan(known));
     }
 
     @Test

@@ -19,6 +19,27 @@ public class RemotingVersionMonitor extends NodeMonitor {
     @DataBoundConstructor
     public RemotingVersionMonitor() {}
 
+    /** The remoting version of the controller. */
+    private static VersionInfo controllerVersion() {
+        return VersionInfo.fromRemoting(Launcher.VERSION);
+    }
+
+    /** Whether the node runs an older remoting version than the controller. */
+    public boolean isOutdated(VersionInfo info) {
+        return info != null && info.isOlderThan(controllerVersion());
+    }
+
+    /** The full version, with the controller's version added if the node is outdated. */
+    public String getTooltip(VersionInfo info) {
+        if (info == null) {
+            return "";
+        }
+        return isOutdated(info)
+                ? info.getTooltip() + " (older than the controller: "
+                        + controllerVersion().getTooltip() + ")"
+                : info.getTooltip();
+    }
+
     @Extension
     @Symbol("remotingVersionMonitor")
     public static class DescriptorImpl extends AbstractAsyncNodeMonitorDescriptor<VersionInfo> {

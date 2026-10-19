@@ -11,6 +11,8 @@ public class VersionInfo implements Serializable {
     /** The numeric part of a version followed by a {@code .v<hash>} suffix, as used by remoting. */
     private static final Pattern HASH_SUFFIX = Pattern.compile("^(\\d+(?:\\.\\d+)*)\\.v.*$");
 
+    private static final Pattern NUMBERS = Pattern.compile("\\d+(?:\\.\\d+)*");
+
     private final String display;
     private final String full;
 
@@ -55,6 +57,51 @@ public class VersionInfo implements Serializable {
         }
         Matcher matcher = HASH_SUFFIX.matcher(version);
         return new VersionInfo(matcher.matches() ? matcher.group(1) : version, version);
+    }
+
+    /** Whether the first number (the JVM feature release) is lower than {@code other}'s. */
+    boolean isFeatureOlderThan(VersionInfo other) {
+        int[] mine = numbers(getDisplay());
+        int[] theirs = numbers(other.getDisplay());
+        return mine.length > 0 && theirs.length > 0 && mine[0] < theirs[0];
+    }
+
+    /**
+     * Whether the numbers of this version are lower than those of {@code other}, compared one
+     * component at a time. A missing component counts as 0. Unknown versions are never older.
+     */
+    boolean isOlderThan(VersionInfo other) {
+        int[] mine = numbers(getDisplay());
+        int[] theirs = numbers(other.getDisplay());
+        if (mine.length == 0 || theirs.length == 0) {
+            return false;
+        }
+        for (int i = 0; i < Math.max(mine.length, theirs.length); i++) {
+            int a = i < mine.length ? mine[i] : 0;
+            int b = i < theirs.length ? theirs[i] : 0;
+            if (a != b) {
+                return a < b;
+            }
+        }
+        return false;
+    }
+
+    /** The leading dot-separated numbers of {@code version}, or an empty array if there are none. */
+    private static int[] numbers(String version) {
+        Matcher matcher = NUMBERS.matcher(version);
+        if (!matcher.lookingAt()) {
+            return new int[0];
+        }
+        String[] parts = matcher.group().split("\\.");
+        int[] result = new int[parts.length];
+        for (int i = 0; i < parts.length; i++) {
+            try {
+                result[i] = Integer.parseInt(parts[i]);
+            } catch (NumberFormatException e) {
+                return new int[0];
+            }
+        }
+        return result;
     }
 
     @Override

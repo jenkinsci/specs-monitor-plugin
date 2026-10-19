@@ -74,12 +74,15 @@ in the monitor's configuration (`warnBelowPercent` in Configuration as Code).
 
 The **JVM Version** monitor shows the version of the Java virtual machine running on every node,
 for example `25.0.4.1`. Hovering over the value shows the full version, for example `25.0.4.1+1-LTS`.
+When a node runs an older Java feature release than the controller (for example Java 17 versus
+Java 21), the value is shown in yellow with a warning symbol.
 
 ## Remoting version monitor
 
 The **Remoting Version** monitor shows the remoting version of every node, for example `3355.3357`.
 Hovering over the value shows the full version, for example `3355.3357.v931d3c992987`. It is read on
-the node itself, so it shows the remoting library the agent is actually running.
+the node itself, so it shows the remoting library the agent is actually running. When a node runs an
+older remoting version than the controller, the value is shown in yellow with a warning symbol.
 
 ## Uptime monitor
 
