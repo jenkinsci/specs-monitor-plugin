@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This plugin adds node monitors to the Jenkins node list for **CPU**, **Free RAM**, **GPU**, **Free JVM Memory**, **Uptime**, and **Connection**.
+This plugin adds node monitors to the Jenkins node list for **CPU**, **Free RAM**, **GPU**, **Free JVM Memory**, **JVM Version**, **Remoting Version**, **Uptime**, and **Connection**.
 The CPU monitor shows the CPU model and the number of hardware threads (logical processors) of every
 node (built-in node and agents). This makes it easy to see which agents are fast or slow without opening each machine.
 When a CPU matches, the column also shows its median CPU benchmark score from [Blender Open Data](https://opendata.blender.org/benchmarks/query/?compute_type=CPU&blender_version=5.2.0&group_by=device_name).
@@ -70,6 +70,17 @@ the time of the last refresh. When free memory drops below a configurable percen
 maximum heap (default 10%), the value is shown in yellow with a warning symbol. Set the threshold
 in the monitor's configuration (`warnBelowPercent` in Configuration as Code).
 
+## JVM version monitor
+
+The **JVM Version** monitor shows the version of the Java virtual machine running on every node,
+for example `25.0.4.1`. Hovering over the value shows the full version, for example `25.0.4.1+1-LTS`.
+
+## Remoting version monitor
+
+The **Remoting Version** monitor shows the remoting version of every node, for example `3355.3357`.
+Hovering over the value shows the full version, for example `3355.3357.v931d3c992987`. It is read on
+the node itself, so it shows the remoting library the agent is actually running.
+
 ## Uptime monitor
 
 The **Uptime** monitor shows how long the machine of every node has been running since its last boot,
@@ -106,7 +117,7 @@ GPU information show `N/A`.
 
 1. Install the plugin.
 2. Go to **Manage Jenkins → Nodes → Configure Monitors** (gear icon).
-3. Enable **CPU**, **Free RAM**, **Free JVM Memory**, **GPU**, **Uptime** and/or **Connection**.
+3. Enable **CPU**, **Free RAM**, **Free JVM Memory**, **JVM Version**, **Remoting Version**, **GPU**, **Uptime** and/or **Connection**.
 4. A CPU column appears in the node list, for example `i7-13700K (16 threads)`.
 
 ### Configuration as Code
@@ -117,6 +128,8 @@ jenkins:
     - cpuMonitor
     - memoryMonitor
     - jvmMemoryMonitor
+    - jvmVersionMonitor
+    - remotingVersionMonitor
     - gpuMonitor
     - uptimeMonitor
     - connectionMonitor
