@@ -18,8 +18,19 @@ public class JvmVersionMonitor extends NodeMonitor {
     @DataBoundConstructor
     public JvmVersionMonitor() {}
 
+    /** Replaces the controller's version, so that tests can make a node look outdated. */
+    private transient VersionInfo controllerVersionOverride;
+
+    void setControllerVersionOverride(VersionInfo version) {
+        this.controllerVersionOverride = version;
+    }
+
+    private VersionInfo controllerVersion() {
+        return controllerVersionOverride != null ? controllerVersionOverride : actualControllerVersion();
+    }
+
     /** The version of the JVM running the controller. */
-    private static VersionInfo controllerVersion() {
+    private static VersionInfo actualControllerVersion() {
         return VersionInfo.fromJvm(Runtime.version());
     }
 

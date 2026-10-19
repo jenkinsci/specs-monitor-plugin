@@ -19,8 +19,19 @@ public class RemotingVersionMonitor extends NodeMonitor {
     @DataBoundConstructor
     public RemotingVersionMonitor() {}
 
+    /** Replaces the controller's version, so that tests can make a node look outdated. */
+    private transient VersionInfo controllerVersionOverride;
+
+    void setControllerVersionOverride(VersionInfo version) {
+        this.controllerVersionOverride = version;
+    }
+
+    private VersionInfo controllerVersion() {
+        return controllerVersionOverride != null ? controllerVersionOverride : actualControllerVersion();
+    }
+
     /** The remoting version of the controller. */
-    private static VersionInfo controllerVersion() {
+    private static VersionInfo actualControllerVersion() {
         return VersionInfo.fromRemoting(Launcher.VERSION);
     }
 

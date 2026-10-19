@@ -28,7 +28,7 @@ public class GitVersionMonitor extends NodeMonitor {
      * The version of Git on the controller. The result is cached for a few minutes, because
      * this is called for every node each time the node list is rendered.
      */
-    private static VersionInfo controllerVersion() {
+    private static VersionInfo actualControllerVersion() {
         VersionInfo cached = cachedControllerVersion;
         if (cached == null || System.currentTimeMillis() - cachedAt > CONTROLLER_CACHE_MILLIS) {
             cached = readGitVersion();
@@ -36,6 +36,17 @@ public class GitVersionMonitor extends NodeMonitor {
             cachedAt = System.currentTimeMillis();
         }
         return cached;
+    }
+
+    /** Replaces the controller's version, so that tests can make a node look outdated. */
+    private transient VersionInfo controllerVersionOverride;
+
+    void setControllerVersionOverride(VersionInfo version) {
+        this.controllerVersionOverride = version;
+    }
+
+    private VersionInfo controllerVersion() {
+        return controllerVersionOverride != null ? controllerVersionOverride : actualControllerVersion();
     }
 
     private static VersionInfo readGitVersion() {
