@@ -2,24 +2,40 @@
 
 ## Introduction
 
-This plugin adds node monitors to the Jenkins node list for **CPU**, **Free RAM**, **GPU**, **Free JVM Memory**, **JVM Version**, **Remoting Version**, **Uptime**, and **Connection**.
-The CPU monitor shows the CPU model and the number of hardware threads (logical processors) of every
-node (built-in node and agents). This makes it easy to see which agents are fast or slow without opening each machine.
-When a CPU matches, the column also shows its median CPU benchmark score from [Blender Open Data](https://opendata.blender.org/benchmarks/query/?compute_type=CPU&blender_version=5.2.0&group_by=device_name).
-The bundled `src/main/resources/io/jenkins/plugins/specsmonitor/CpuMonitor/blender_open_data.csv`
-contains the Blender device name and median score.
+Specs Monitor adds columns to the Jenkins node list that show what each build machine is made of and
+how it is set up: hardware, versions of the software your builds depend on, and how to reach the
+machine. This makes it easy to see which agents are fast, slow or outdated without opening each one.
 
-The CPU monitor runs on the node itself, so it reports the hardware of that node. Long vendor
-strings such as `13th Gen Intel(R) Core(TM) i9-13900H` are shortened to `i9-13900H`.
+| Monitor | Shows | Example |
+| --- | --- | --- |
+| [CPU](#cpu-monitor) | CPU model, hardware threads and benchmark score | `i7-13700K (16 threads)` |
+| [Free RAM](#memory-monitor) | Available memory, with a warning when it runs low | `15.6 GiB` |
+| [GPU](#gpu-monitor) | Graphics processor | `NVIDIA GeForce RTX 4070` |
+| [Free JVM Memory](#jvm-memory-monitor) | Free heap of the node's JVM, with a warning when it runs low | `1.6 GiB` |
+| [JVM Version](#jvm-version-monitor) | Java version, with a warning when older than the controller | `25.0.4.1` |
+| [Remoting Version](#remoting-version-monitor) | Remoting version, with a warning when older than the controller | `3355.3357` |
+| [Git Version](#git-version-monitor) | Git version, with a warning when older than the controller | `2.43.0` |
+| [Uptime](#uptime-monitor) | Time since the machine last booted | `3d 4h` |
+| [Connection](#connection-monitor) | How the node connects, plus its IP address | `WebSocket (192.168.1.20)` |
 
-Supported operating systems:
+Hover over a value to see more detail, for example the full version or the exact amount of memory.
+Every monitor runs on the node itself, so it reports that node and not the controller. Each one can
+be switched on separately, and none of them can take a node offline.
 
-- Windows (PowerShell, with a registry fallback)
-- Linux (`lscpu`, with `/proc/cpuinfo` as a fallback), including x86, ARM (aarch64) and POWER
-- macOS (`sysctl`)
+Together with the Connection monitor, the plugin also adds a [Remote access](#remote-access) link to
+every node, so you can find a machine's IP address and connect to it over Remote Desktop or SSH.
 
-On other systems (for example AIX or Solaris), or if the CPU name cannot be determined, the
-monitor shows `N/A`.
+### Supported systems
+
+- **Operating systems:** Windows, Linux (x86, ARM and POWER) and macOS. The hardware and uptime monitors
+  read the information with PowerShell on Windows, `/proc` and `lscpu` on Linux, and `sysctl` on macOS.
+  On other systems, such as AIX or Solaris, or if a value cannot be determined, the monitor shows `N/A`.
+  The version monitors work on every system. The Git monitor needs Git on the node's `PATH`.
+- **Jenkins:** 2.541.3 or newer.
+- **Nodes:** the built-in node and agents, however they connect: WebSocket, inbound (JNLP/TCP), SSH or
+  a command launcher.
+- **Configuration:** from the UI under **Manage Jenkins → Nodes → Configure Monitors**, or with
+  Configuration as Code (see [Getting started](#getting-started)).
 
 ## Screenshots
 
@@ -43,8 +59,18 @@ monitor shows `N/A`.
 ## CPU monitor
 
 A separate monitor, **CPU**, shows the CPU model and the number of hardware threads (logical processors) of every node as a
-column, for example `i7-13700K (16 threads)`. When a CPU model matches one in the bundled Blender benchmark dataset,
-the column also shows the median benchmark score for that hardware.
+column, for example `i7-13700K (16 threads)`. Long vendor strings such as
+`13th Gen Intel(R) Core(TM) i9-13900H` are shortened to `i9-13900H`. When a CPU model matches one in
+the bundled Blender benchmark dataset, the column also shows the median benchmark score for that
+hardware, from [Blender Open Data](https://opendata.blender.org/benchmarks/query/?compute_type=CPU&blender_version=5.2.0&group_by=device_name).
+The bundled `src/main/resources/io/jenkins/plugins/specsmonitor/CpuMonitor/blender_open_data.csv`
+contains the Blender device name and median score.
+
+- Windows: PowerShell, with a registry fallback
+- Linux: `lscpu`, with `/proc/cpuinfo` as a fallback, including x86, ARM (aarch64) and POWER
+- macOS: `sysctl`
+
+On other systems, or if the CPU name cannot be determined, the monitor shows `N/A`.
 
 ## Memory monitor
 
@@ -84,6 +110,14 @@ Hovering over the value shows the full version, for example `3355.3357.v931d3c99
 the node itself, so it shows the remoting library the agent is actually running. When a node runs an
 older remoting version than the controller, the value is shown in yellow with a warning symbol.
 
+## Git version monitor
+
+The **Git Version** monitor shows the version of Git installed on every node, for example `2.43.0`.
+Hovering over the value shows the full version, for example `2.43.0.windows.1`. It runs
+`git --version` on the node, so it reports the Git on the agent's `PATH`; nodes without Git show
+`N/A`. When a node has an older Git than the controller, the value is shown in yellow with a warning
+symbol.
+
 ## Uptime monitor
 
 The **Uptime** monitor shows how long the machine of every node has been running since its last boot,
@@ -99,6 +133,12 @@ The IP address of the node follows in parentheses, for example `WebSocket (192.1
 the address the node uses for its default route, falling back to a private IPv4 address of its
 network interfaces. The value is only reported while the node is online. Other launch methods are shown by their class name.
 
+**Find a machine's IP and connect to it in seconds.** The node list shows the IP address of every
+node right next to how it is connected, so there is no need to look it up in a hostname list, a
+cloud console or on the machine itself. From there, open the node's page and use the
+[Remote access](#remote-access) link to start a Remote Desktop session (Windows) or an SSH session
+(Linux and macOS) with that address.
+
 ## Remote access
 
 Each node's page has a **Remote access** link in its sidebar (requires the *Configure* permission on
@@ -106,8 +146,8 @@ the node). For Windows nodes it offers **Download .rdp file**, which opens in Re
 **Open rdp:// link**, which needs a client that handles `rdp://` (for example the Microsoft Remote
 Desktop or Windows App client; the built-in Windows client does not). For Linux and macOS nodes it offers **Connect with SSH**, an `ssh://`
 link that opens the SSH client registered on your computer, plus the `ssh` command to copy. The
-node must be online, and the address is the one the node itself reports (see the Connection
-monitor). Credentials are never stored or sent by Jenkins.
+node must be online, and the address is the one the node itself reports (see the
+[Connection monitor](#connection-monitor)). Credentials are never stored or sent by Jenkins.
 
 ## GPU monitor
 
@@ -120,8 +160,9 @@ GPU information show `N/A`.
 
 1. Install the plugin.
 2. Go to **Manage Jenkins → Nodes → Configure Monitors** (gear icon).
-3. Enable **CPU**, **Free RAM**, **Free JVM Memory**, **JVM Version**, **Remoting Version**, **GPU**, **Uptime** and/or **Connection**.
-4. A CPU column appears in the node list, for example `i7-13700K (16 threads)`.
+3. Enable **CPU**, **Free RAM**, **Free JVM Memory**, **JVM Version**, **Remoting Version**, **Git Version**, **GPU**, **Uptime** and/or **Connection**.
+4. A column appears in the node list for each monitor you enabled, for example `i7-13700K (16 threads)`
+   for CPU or `25.0.4.1` for JVM Version. Hover over a value for more detail.
 
 ### Configuration as Code
 
@@ -133,6 +174,7 @@ jenkins:
     - jvmMemoryMonitor
     - jvmVersionMonitor
     - remotingVersionMonitor
+    - gitVersionMonitor
     - gpuMonitor
     - uptimeMonitor
     - connectionMonitor
