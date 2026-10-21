@@ -3,6 +3,7 @@ package io.jenkins.plugins.specsmonitor;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import hudson.ExtensionList;
@@ -95,11 +96,21 @@ class ColumnRenderTest {
             Function<T, String> tooltip)
             throws Exception {
         String html = renderPage(j, monitor, descriptor).getWebResponse().getContentAsString();
-
-        String expected =
-                tooltip.apply(ExtensionList.lookupSingleton(descriptor).get(j.jenkins.toComputer()));
-        assertFalse(expected.isEmpty(), "the monitor reported no tooltip");
-        assertTrue(html.contains("tooltip=\"" + expected + "\""), html);
+        String expected = null;
+        // Free JVM memory changes constantly and the monitor can refresh between rendering the page
+        // and reading the data, so retry until both agree.
+        for (int i = 0; i < 10; i++) {
+            if (i > 0) {
+                html = ColumnTestSupport.renderNodeList(j).getWebResponse().getContentAsString();
+            }
+            expected = tooltip.apply(
+                    ExtensionList.lookupSingleton(descriptor).get(j.jenkins.toComputer()));
+            assertFalse(expected.isEmpty(), "the monitor reported no tooltip");
+            if (html.contains("tooltip=\"" + expected + "\"")) {
+                return;
+            }
+        }
+        fail("the node list never showed the tooltip " + expected + ":\n" + html);
     }
 
     /**
@@ -113,9 +124,18 @@ class ColumnRenderTest {
             Function<T, String> tooltip)
             throws Exception {
         HtmlPage page = renderPage(j, monitor, descriptor);
-        String expected =
-                tooltip.apply(ExtensionList.lookupSingleton(descriptor).get(j.jenkins.toComputer()));
-        List<HtmlElement> cells = page.getByXPath("//td[@tooltip='" + expected + "']");
+        String expected = null;
+        List<HtmlElement> cells = List.of();
+        // Free JVM memory changes constantly and the monitor can refresh between rendering the page
+        // and reading the data, so retry until both agree.
+        for (int i = 0; i < 10 && cells.size() != 1; i++) {
+            if (i > 0) {
+                page = ColumnTestSupport.renderNodeList(j);
+            }
+            expected = tooltip.apply(
+                    ExtensionList.lookupSingleton(descriptor).get(j.jenkins.toComputer()));
+            cells = page.getByXPath("//td[@tooltip='" + expected + "']");
+        }
         assertEquals(1, cells.size(), "expected exactly one cell with the tooltip " + expected);
         return cells.get(0).getTextContent().contains(WARNING_SYMBOL);
     }
