@@ -32,13 +32,13 @@ class AgentColumnRenderTest {
     @Test
     void jvmVersionIsReportedByAgent(JenkinsRule j) throws Exception {
         assertAgentRowShowsTooltip(
-                j, new JvmVersionMonitor(), JvmVersionMonitor.DescriptorImpl.class, VersionInfo::getTooltip);
+                j, new JvmVersionMonitor(), JvmVersionMonitor.DescriptorImpl.class, i -> i.getTooltip());
     }
 
     @Test
     void remotingVersionIsReportedByAgent(JenkinsRule j) throws Exception {
         assertAgentRowShowsTooltip(
-                j, new RemotingVersionMonitor(), RemotingVersionMonitor.DescriptorImpl.class, VersionInfo::getTooltip);
+                j, new RemotingVersionMonitor(), RemotingVersionMonitor.DescriptorImpl.class, i -> i.getTooltip());
     }
 
     @Test
@@ -54,18 +54,18 @@ class AgentColumnRenderTest {
                 "Git not found");
 
         assertAgentRowShowsTooltip(
-                j, new GitVersionMonitor(), GitVersionMonitor.DescriptorImpl.class, VersionInfo::getTooltip);
+                j, new GitVersionMonitor(), GitVersionMonitor.DescriptorImpl.class, i -> i.getTooltip());
     }
 
     @Test
     void freeRamIsReportedByAgent(JenkinsRule j) throws Exception {
-        assertAgentRowShowsTooltip(j, new MemoryMonitor(), MemoryMonitor.DescriptorImpl.class, MemoryInfo::getTooltip);
+        assertAgentRowShowsTooltip(j, new MemoryMonitor(), MemoryMonitor.DescriptorImpl.class, i -> i.getTooltip());
     }
 
     @Test
     void freeJvmMemoryIsReportedByAgent(JenkinsRule j) throws Exception {
         assertAgentRowShowsTooltip(
-                j, new JvmMemoryMonitor(), JvmMemoryMonitor.DescriptorImpl.class, MemoryInfo::getTooltip);
+                j, new JvmMemoryMonitor(), JvmMemoryMonitor.DescriptorImpl.class, i -> i.getTooltip());
     }
 
     @Test

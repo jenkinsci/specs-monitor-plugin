@@ -29,13 +29,13 @@ class ColumnRenderTest {
 
     @Test
     void jvmVersionShowsTooltip(JenkinsRule j) throws Exception {
-        assertShowsTooltip(j, new JvmVersionMonitor(), JvmVersionMonitor.DescriptorImpl.class, VersionInfo::getTooltip);
+        assertShowsTooltip(j, new JvmVersionMonitor(), JvmVersionMonitor.DescriptorImpl.class, i -> i.getTooltip());
     }
 
     @Test
     void remotingVersionShowsTooltip(JenkinsRule j) throws Exception {
         assertShowsTooltip(
-                j, new RemotingVersionMonitor(), RemotingVersionMonitor.DescriptorImpl.class, VersionInfo::getTooltip);
+                j, new RemotingVersionMonitor(), RemotingVersionMonitor.DescriptorImpl.class, i -> i.getTooltip());
     }
 
     /** Git may not be installed where the tests run, in which case there is no tooltip to show. */
@@ -43,17 +43,17 @@ class ColumnRenderTest {
     void gitVersionShowsTooltip(JenkinsRule j) throws Exception {
         assumeGitIsInstalled(j);
 
-        assertShowsTooltip(j, new GitVersionMonitor(), GitVersionMonitor.DescriptorImpl.class, VersionInfo::getTooltip);
+        assertShowsTooltip(j, new GitVersionMonitor(), GitVersionMonitor.DescriptorImpl.class, i -> i.getTooltip());
     }
 
     @Test
     void freeRamShowsTooltip(JenkinsRule j) throws Exception {
-        assertShowsTooltip(j, new MemoryMonitor(), MemoryMonitor.DescriptorImpl.class, MemoryInfo::getTooltip);
+        assertShowsTooltip(j, new MemoryMonitor(), MemoryMonitor.DescriptorImpl.class, i -> i.getTooltip());
     }
 
     @Test
     void freeJvmMemoryShowsTooltip(JenkinsRule j) throws Exception {
-        assertShowsTooltip(j, new JvmMemoryMonitor(), JvmMemoryMonitor.DescriptorImpl.class, MemoryInfo::getTooltip);
+        assertShowsTooltip(j, new JvmMemoryMonitor(), JvmMemoryMonitor.DescriptorImpl.class, i -> i.getTooltip());
     }
 
     @Test
@@ -61,7 +61,7 @@ class ColumnRenderTest {
         MemoryMonitor always = new MemoryMonitor();
         always.setWarnBelowPercent(100);
 
-        assertTrue(cellWarns(j, always, MemoryMonitor.DescriptorImpl.class, MemoryInfo::getTooltip));
+        assertTrue(cellWarns(j, always, MemoryMonitor.DescriptorImpl.class, i -> i.getTooltip()));
     }
 
     @Test
@@ -69,7 +69,7 @@ class ColumnRenderTest {
         MemoryMonitor never = new MemoryMonitor();
         never.setWarnBelowPercent(0);
 
-        assertFalse(cellWarns(j, never, MemoryMonitor.DescriptorImpl.class, MemoryInfo::getTooltip));
+        assertFalse(cellWarns(j, never, MemoryMonitor.DescriptorImpl.class, i -> i.getTooltip()));
     }
 
     @Test
@@ -77,7 +77,7 @@ class ColumnRenderTest {
         JvmMemoryMonitor always = new JvmMemoryMonitor();
         always.setWarnBelowPercent(100);
 
-        assertTrue(cellWarns(j, always, JvmMemoryMonitor.DescriptorImpl.class, MemoryInfo::getTooltip));
+        assertTrue(cellWarns(j, always, JvmMemoryMonitor.DescriptorImpl.class, i -> i.getTooltip()));
     }
 
     @Test
@@ -85,7 +85,7 @@ class ColumnRenderTest {
         JvmMemoryMonitor never = new JvmMemoryMonitor();
         never.setWarnBelowPercent(0);
 
-        assertFalse(cellWarns(j, never, JvmMemoryMonitor.DescriptorImpl.class, MemoryInfo::getTooltip));
+        assertFalse(cellWarns(j, never, JvmMemoryMonitor.DescriptorImpl.class, i -> i.getTooltip()));
     }
 
     /** Checks that the node list has the tooltip of the data the monitor collected for the built-in node. */
