@@ -8,7 +8,7 @@
         ${data.shortName} (${data.threads} Threads)
       </j:when>
       <j:otherwise>
-        <span class="jenkins-!-warning-color">N/A</span>
+        N/A
       </j:otherwise>
     </j:choose>
   </td>
