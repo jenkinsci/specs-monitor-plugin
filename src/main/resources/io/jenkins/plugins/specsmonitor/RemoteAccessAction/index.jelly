@@ -6,12 +6,19 @@
     <st:include page="sidepanel.jelly" it="${it.computer}"/>
     <l:main-panel>
       <h1>Remote Access</h1>
+      <j:if test="${it.computer.offline and target != null and target.ip != null}">
+        <p class="jenkins-description">
+          The node is offline. The address is the one it last reported and may be out of date.
+        </p>
+      </j:if>
       <j:choose>
-        <j:when test="${it.computer.offline}">
-          <p>The node is offline, so its address is not known.</p>
-        </j:when>
         <j:when test="${target == null or target.ip == null}">
-          <p>The address of the node could not be determined.</p>
+          <p>
+            <j:choose>
+              <j:when test="${it.computer.offline}">The node is offline and its address was never collected. Enable the Connection monitor and bring the node online once.</j:when>
+              <j:otherwise>The address of the node could not be determined.</j:otherwise>
+            </j:choose>
+          </p>
         </j:when>
         <j:when test="${target.windows}">
           <p>

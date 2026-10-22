@@ -121,8 +121,9 @@ the node). For Windows nodes it offers **Download .rdp file**, which opens in Re
 **Open rdp:// link**, which needs a client that handles `rdp://` (for example the Microsoft Remote
 Desktop or Windows App client; the built-in Windows client does not). For Linux and macOS nodes it offers **Connect with SSH**, an `ssh://`
 link that opens the SSH client registered on your computer, plus the `ssh` command to copy. The
-node must be online, and the address is the one the node itself reports (see the
-[Connection monitor](#connection-monitor)). Credentials are never stored or sent by Jenkins.
+address is the one the node itself reports (see the
+[Connection monitor](#connection-monitor)). While a node is offline, the last address it reported
+is shown. Credentials are never stored or sent by Jenkins.
 
 ## GPU monitor
 

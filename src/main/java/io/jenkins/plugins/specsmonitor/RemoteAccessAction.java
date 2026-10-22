@@ -1,6 +1,7 @@
 package io.jenkins.plugins.specsmonitor;
 
 import hudson.Extension;
+import hudson.ExtensionList;
 import hudson.model.Action;
 import hudson.model.Computer;
 import hudson.model.TransientComputerActionFactory;
@@ -48,23 +49,30 @@ public class RemoteAccessAction implements Action {
     }
 
     /**
-     * Asks the node for its operating system and IP address. Returns {@code null} if
-     * the node is offline or does not answer.
+     * Asks the node for its operating system and IP address. If the node is offline or does
+     * not answer, falls back to what the Connection monitor last collected, and returns
+     * {@code null} if there is none.
      */
     public RemoteTarget getTarget() {
         computer.checkPermission(Computer.CONFIGURE);
         VirtualChannel channel = computer.getChannel();
-        if (channel == null) {
-            return null;
+        if (channel != null) {
+            try {
+                return channel.call(new GetRemoteTarget());
+            } catch (IOException e) {
+                LOGGER.log(Level.FINE, e, () -> "Could not read the address of " + computer.getName());
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
         }
-        try {
-            return channel.call(new GetRemoteTarget());
-        } catch (IOException e) {
-            LOGGER.log(Level.FINE, e, () -> "Could not read the address of " + computer.getName());
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-        return null;
+        return lastKnownTarget();
+    }
+
+    /** The address the Connection monitor last collected from the node, which it keeps while offline. */
+    private RemoteTarget lastKnownTarget() {
+        ConnectionInfo info = ExtensionList.lookupSingleton(ConnectionMonitor.DescriptorImpl.class)
+                .get(computer);
+        return info == null ? null : info.getRemoteTarget();
     }
 
     /** Sends an {@code .rdp} file that opens Remote Desktop Connection for a Windows node. */

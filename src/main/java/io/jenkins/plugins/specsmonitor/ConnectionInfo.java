@@ -13,15 +13,17 @@ public class ConnectionInfo implements Serializable {
     private final String display;
     private final String tooltip;
     private final String ip;
+    private final RemoteTarget.Family family;
 
     public ConnectionInfo(String display, String tooltip) {
-        this(display, tooltip, null);
+        this(display, tooltip, null, null);
     }
 
-    private ConnectionInfo(String display, String tooltip, String ip) {
+    private ConnectionInfo(String display, String tooltip, String ip, RemoteTarget.Family family) {
         this.display = display;
         this.tooltip = tooltip;
         this.ip = ip;
+        this.family = family;
     }
 
     /** The connection type only, e.g. {@code WebSocket}. */
@@ -46,9 +48,17 @@ public class ConnectionInfo implements Serializable {
         return tooltip.isEmpty() ? "IP address: " + ip : tooltip + ". IP address: " + ip;
     }
 
-    /** Returns a copy of this connection that also reports the given IP address. */
-    ConnectionInfo withIp(String ip) {
-        return new ConnectionInfo(display, tooltip, ip);
+    /**
+     * The remote access target as last reported by the node, or {@code null} if the node never
+     * reported its address. It stays available while the node is offline.
+     */
+    RemoteTarget getRemoteTarget() {
+        return ip == null ? null : new RemoteTarget(family, ip);
+    }
+
+    /** Returns a copy of this connection that also reports the given IP address and system. */
+    ConnectionInfo withHost(String ip, RemoteTarget.Family family) {
+        return new ConnectionInfo(display, tooltip, ip, family);
     }
 
     /**

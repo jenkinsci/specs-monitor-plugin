@@ -62,7 +62,7 @@ public class ConnectionMonitor extends NodeMonitor {
         @Override
         public ConnectionInfo call() {
             // Runs on the node, so the address is the one of the node itself.
-            return info.withIp(IpAddressFinder.find());
+            return info.withHost(IpAddressFinder.find(), RemoteTarget.Family.fromOsName(System.getProperty("os.name")));
         }
     }
 }
