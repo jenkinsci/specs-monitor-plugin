@@ -3,8 +3,8 @@
 ## Introduction
 
 Specs Monitor adds columns to the Jenkins node list that show what each build machine is made of and
-how it is set up: hardware, versions of the software your builds depend on, and how to reach the
-machine. This makes it easy to see which agents are fast, slow or outdated without opening each one.
+how it is set up: hardware, uptime, and how to reach the machine. This makes it easy to see which
+agents are fast or slow without opening each one.
 
 | Monitor | Shows | Example |
 | --- | --- | --- |
@@ -15,7 +15,7 @@ machine. This makes it easy to see which agents are fast, slow or outdated witho
 | [Uptime](#uptime-monitor) | Time since the machine last booted | `3d 4h` |
 | [Connection](#connection-monitor) | How the node connects, plus its IP address | `WebSocket (192.168.1.20)` |
 
-Hover over a value to see more detail, for example the full version or the exact amount of memory.
+Hover over a value to see more detail, for example the full CPU name or the exact amount of memory.
 Every monitor runs on the node itself, so it reports that node and not the controller. Each one can
 be switched on separately, and none of them can take a node offline.
 
@@ -27,7 +27,6 @@ every node, so you can find a machine's IP address and connect to it over Remote
 - **Operating systems:** Windows, Linux (x86, ARM and POWER) and macOS. The hardware and uptime monitors
   read the information with PowerShell on Windows, `/proc` and `lscpu` on Linux, and `sysctl` on macOS.
   On other systems, such as AIX or Solaris, or if a value cannot be determined, the monitor shows `N/A`.
-  The version monitors work on every system. The Git monitor needs Git on the node's `PATH`.
 - **Jenkins:** 2.541.3 or newer.
 - **Nodes:** the built-in node and agents, however they connect: WebSocket, inbound (JNLP/TCP), SSH or
   a command launcher.
