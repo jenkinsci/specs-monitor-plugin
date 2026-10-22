@@ -12,9 +12,6 @@ machine. This makes it easy to see which agents are fast, slow or outdated witho
 | [Free RAM](#memory-monitor) | Available memory, with a warning when it runs low | `15.6 GiB` |
 | [GPU](#gpu-monitor) | Graphics processor | `NVIDIA GeForce RTX 4070` |
 | [Free JVM Memory](#jvm-memory-monitor) | Free heap of the node's JVM, with a warning when it runs low | `1.6 GiB` |
-| [JVM Version](#jvm-version-monitor) | Java version, with a warning when older than the controller | `25.0.4.1` |
-| [Remoting Version](#remoting-version-monitor) | Remoting version, with a warning when older than the controller | `3355.3357` |
-| [Git Version](#git-version-monitor) | Git version, with a warning when older than the controller | `2.43.0` |
 | [Uptime](#uptime-monitor) | Time since the machine last booted | `3d 4h` |
 | [Connection](#connection-monitor) | How the node connects, plus its IP address | `WebSocket (192.168.1.20)` |
 
@@ -96,28 +93,6 @@ the time of the last refresh. When free memory drops below a configurable percen
 maximum heap (default 10%), the value is shown in yellow with a warning symbol. Set the threshold
 in the monitor's configuration (`warnBelowPercent` in Configuration as Code).
 
-## JVM version monitor
-
-The **JVM Version** monitor shows the version of the Java virtual machine running on every node,
-for example `25.0.4.1`. Hovering over the value shows the full version, for example `25.0.4.1+1-LTS`.
-When a node runs an older Java feature release than the controller (for example Java 17 versus
-Java 21), the value is shown in yellow with a warning symbol.
-
-## Remoting version monitor
-
-The **Remoting Version** monitor shows the remoting version of every node, for example `3355.3357`.
-Hovering over the value shows the full version, for example `3355.3357.v931d3c992987`. It is read on
-the node itself, so it shows the remoting library the agent is actually running. When a node runs an
-older remoting version than the controller, the value is shown in yellow with a warning symbol.
-
-## Git version monitor
-
-The **Git Version** monitor shows the version of Git installed on every node, for example `2.43.0`.
-Hovering over the value shows the full version, for example `2.43.0.windows.1`. It runs
-`git --version` on the node, so it reports the Git on the agent's `PATH`; nodes without Git show
-`N/A`. When a node has an older Git than the controller, the value is shown in yellow with a warning
-symbol.
-
 ## Uptime monitor
 
 The **Uptime** monitor shows how long the machine of every node has been running since its last boot,
@@ -160,9 +135,9 @@ GPU information show `N/A`.
 
 1. Install the plugin.
 2. Go to **Manage Jenkins → Nodes → Configure Monitors** (gear icon).
-3. Enable **CPU**, **Free RAM**, **Free JVM Memory**, **JVM Version**, **Remoting Version**, **Git Version**, **GPU**, **Uptime** and/or **Connection**.
+3. Enable **CPU**, **Free RAM**, **Free JVM Memory**, **GPU**, **Uptime** and/or **Connection**.
 4. A column appears in the node list for each monitor you enabled, for example `i7-13700K (16 threads)`
-   for CPU or `25.0.4.1` for JVM Version. Hover over a value for more detail.
+   for CPU or `15.6 GiB` for Free RAM. Hover over a value for more detail.
 
 ### Configuration as Code
 
@@ -172,9 +147,6 @@ jenkins:
     - cpuMonitor
     - memoryMonitor
     - jvmMemoryMonitor
-    - jvmVersionMonitor
-    - remotingVersionMonitor
-    - gitVersionMonitor
     - gpuMonitor
     - uptimeMonitor
     - connectionMonitor

@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import hudson.ExtensionList;
 import hudson.node_monitors.AbstractAsyncNodeMonitorDescriptor;
@@ -26,25 +25,6 @@ import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 class ColumnRenderTest {
 
     private static final String WARNING_SYMBOL = "⚠";
-
-    @Test
-    void jvmVersionShowsTooltip(JenkinsRule j) throws Exception {
-        assertShowsTooltip(j, new JvmVersionMonitor(), JvmVersionMonitor.DescriptorImpl.class, i -> i.getTooltip());
-    }
-
-    @Test
-    void remotingVersionShowsTooltip(JenkinsRule j) throws Exception {
-        assertShowsTooltip(
-                j, new RemotingVersionMonitor(), RemotingVersionMonitor.DescriptorImpl.class, i -> i.getTooltip());
-    }
-
-    /** Git may not be installed where the tests run, in which case there is no tooltip to show. */
-    @Test
-    void gitVersionShowsTooltip(JenkinsRule j) throws Exception {
-        assumeGitIsInstalled(j);
-
-        assertShowsTooltip(j, new GitVersionMonitor(), GitVersionMonitor.DescriptorImpl.class, i -> i.getTooltip());
-    }
 
     @Test
     void freeRamShowsTooltip(JenkinsRule j) throws Exception {
@@ -145,82 +125,5 @@ class ColumnRenderTest {
         ColumnTestSupport.enable(monitor);
         ColumnTestSupport.awaitData(descriptor, j.jenkins.toComputer());
         return ColumnTestSupport.renderNodeList(j);
-    }
-
-    /** The version cell of the built-in node, when the controller is made to look newer than it. */
-    private static HtmlElement versionCellWithNewerController(
-            JenkinsRule j,
-            NodeMonitor monitor,
-            Class<? extends AbstractAsyncNodeMonitorDescriptor<VersionInfo>> descriptor)
-            throws Exception {
-        HtmlPage page = renderPage(j, monitor, descriptor);
-        String tooltip = ExtensionList.lookupSingleton(descriptor)
-                .get(j.jenkins.toComputer())
-                .getTooltip();
-        List<HtmlElement> cells = page.getByXPath("//td[starts-with(@tooltip, '" + tooltip + "')]");
-        assertEquals(1, cells.size(), "expected exactly one cell with the tooltip " + tooltip);
-        return cells.get(0);
-    }
-
-    @Test
-    void jvmVersionWarnsWhenControllerIsNewer(JenkinsRule j) throws Exception {
-        JvmVersionMonitor monitor = new JvmVersionMonitor();
-        monitor.setControllerVersionOverride(VersionInfo.fromJvm(Runtime.Version.parse("99.0.1+1")));
-
-        HtmlElement cell = versionCellWithNewerController(j, monitor, JvmVersionMonitor.DescriptorImpl.class);
-
-        assertTrue(cell.getTextContent().contains(WARNING_SYMBOL));
-        assertTrue(cell.getAttribute("tooltip").endsWith("(older than the controller: 99.0.1+1)"));
-    }
-
-    @Test
-    void remotingVersionWarnsWhenControllerIsNewer(JenkinsRule j) throws Exception {
-        RemotingVersionMonitor monitor = new RemotingVersionMonitor();
-        monitor.setControllerVersionOverride(VersionInfo.fromRemoting("999999.v1234"));
-
-        HtmlElement cell = versionCellWithNewerController(j, monitor, RemotingVersionMonitor.DescriptorImpl.class);
-
-        assertTrue(cell.getTextContent().contains(WARNING_SYMBOL));
-        assertTrue(cell.getAttribute("tooltip").endsWith("(older than the controller: 999999.v1234)"));
-    }
-
-    @Test
-    void gitVersionWarnsWhenControllerIsNewer(JenkinsRule j) throws Exception {
-        assumeGitIsInstalled(j);
-        GitVersionMonitor monitor = new GitVersionMonitor();
-        monitor.setControllerVersionOverride(VersionInfo.fromGit("git version 99.0.0"));
-
-        HtmlElement cell = versionCellWithNewerController(j, monitor, GitVersionMonitor.DescriptorImpl.class);
-
-        assertTrue(cell.getTextContent().contains(WARNING_SYMBOL));
-        assertTrue(cell.getAttribute("tooltip").endsWith("(older than the controller: 99.0.0)"));
-    }
-
-    @Test
-    void versionsDoNotWarnWhenNodeMatchesController(JenkinsRule j) throws Exception {
-        assumeGitIsInstalled(j);
-        for (NodeMonitor monitor :
-                List.of(new JvmVersionMonitor(), new RemotingVersionMonitor(), new GitVersionMonitor())) {
-            ColumnTestSupport.enable(monitor);
-        }
-        ColumnTestSupport.awaitData(JvmVersionMonitor.DescriptorImpl.class, j.jenkins.toComputer());
-        ColumnTestSupport.awaitData(RemotingVersionMonitor.DescriptorImpl.class, j.jenkins.toComputer());
-        ColumnTestSupport.awaitData(GitVersionMonitor.DescriptorImpl.class, j.jenkins.toComputer());
-
-        String html = ColumnTestSupport.renderNodeList(j).getWebResponse().getContentAsString();
-
-        assertFalse(html.contains("older than the controller"), html);
-    }
-
-    private static void assumeGitIsInstalled(JenkinsRule j) throws Exception {
-        GitVersionMonitor.DescriptorImpl descriptor =
-                ExtensionList.lookupSingleton(GitVersionMonitor.DescriptorImpl.class);
-        assumeFalse(
-                descriptor
-                        .createCallable(j.jenkins.toComputer())
-                        .call()
-                        .getTooltip()
-                        .isEmpty(),
-                "Git not found");
     }
 }
