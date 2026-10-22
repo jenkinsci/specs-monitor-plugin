@@ -32,8 +32,12 @@ class AgentColumnRenderTest {
 
     @Test
     void freeJvmMemoryIsReportedByAgent(JenkinsRule j) throws Exception {
-        assertAgentRowShowsTooltip(
-                j, new JvmMemoryMonitor(), JvmMemoryMonitor.DescriptorImpl.class, i -> i.getTooltip());
+        // The free heap changes between the sample taken here and the one on the page, so only the
+        // maximum heap, which is fixed for the agent JVM, is compared.
+        assertAgentRowShowsTooltip(j, new JvmMemoryMonitor(), JvmMemoryMonitor.DescriptorImpl.class, i -> {
+            String tooltip = i.getTooltip();
+            return tooltip.substring(tooltip.indexOf(" free of "));
+        });
     }
 
     /** An agent that is not connected has no data, which must render as N/A and not as an error. */
