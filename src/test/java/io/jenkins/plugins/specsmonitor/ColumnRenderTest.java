@@ -103,8 +103,7 @@ class ColumnRenderTest {
             if (i > 0) {
                 html = ColumnTestSupport.renderNodeList(j).getWebResponse().getContentAsString();
             }
-            expected = tooltip.apply(
-                    ExtensionList.lookupSingleton(descriptor).get(j.jenkins.toComputer()));
+            expected = tooltip.apply(ExtensionList.lookupSingleton(descriptor).get(j.jenkins.toComputer()));
             assertFalse(expected.isEmpty(), "the monitor reported no tooltip");
             if (html.contains("tooltip=\"" + expected + "\"")) {
                 return;
@@ -132,8 +131,7 @@ class ColumnRenderTest {
             if (i > 0) {
                 page = ColumnTestSupport.renderNodeList(j);
             }
-            expected = tooltip.apply(
-                    ExtensionList.lookupSingleton(descriptor).get(j.jenkins.toComputer()));
+            expected = tooltip.apply(ExtensionList.lookupSingleton(descriptor).get(j.jenkins.toComputer()));
             cells = page.getByXPath("//td[@tooltip='" + expected + "']");
         }
         assertEquals(1, cells.size(), "expected exactly one cell with the tooltip " + expected);
