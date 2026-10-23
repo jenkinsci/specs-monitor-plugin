@@ -5,8 +5,11 @@ import hudson.slaves.DelegatingComputerLauncher;
 import hudson.slaves.JNLPLauncher;
 import java.io.Serializable;
 import java.util.Locale;
+import org.kohsuke.stapler.export.Exported;
+import org.kohsuke.stapler.export.ExportedBean;
 
 /** How a node is connected to the controller, e.g. WebSocket, JNLP (TCP) or SSH. */
+@ExportedBean
 public class ConnectionInfo implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -27,6 +30,7 @@ public class ConnectionInfo implements Serializable {
     }
 
     /** The connection type only, e.g. {@code WebSocket}. */
+    @Exported
     public String getDisplay() {
         return display;
     }

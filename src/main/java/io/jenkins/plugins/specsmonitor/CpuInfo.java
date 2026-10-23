@@ -2,10 +2,13 @@ package io.jenkins.plugins.specsmonitor;
 
 import java.io.Serializable;
 import java.util.regex.Pattern;
+import org.kohsuke.stapler.export.Exported;
+import org.kohsuke.stapler.export.ExportedBean;
 
 /**
  * CPU model name and number of hardware threads (logical processors) of a node.
  */
+@ExportedBean
 public class CpuInfo implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -31,10 +34,12 @@ public class CpuInfo implements Serializable {
         this.threads = threads;
     }
 
+    @Exported
     public String getName() {
         return name;
     }
 
+    @Exported
     public String getShortName() {
         String withoutMarks = TRADEMARK.matcher(name == null ? "" : name).replaceAll("");
         String s = NOISE.matcher(withoutMarks)
@@ -48,10 +53,12 @@ public class CpuInfo implements Serializable {
      * Number of logical processors (hardware threads) available to the JVM on the
      * node.
      */
+    @Exported
     public int getThreads() {
         return threads;
     }
 
+    @Exported
     public String getScore() {
         return CpuScoreLookup.formatFor(getShortName());
     }

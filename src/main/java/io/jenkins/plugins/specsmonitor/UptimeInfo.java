@@ -1,8 +1,11 @@
 package io.jenkins.plugins.specsmonitor;
 
 import java.io.Serializable;
+import org.kohsuke.stapler.export.Exported;
+import org.kohsuke.stapler.export.ExportedBean;
 
 /** How long the machine of a node has been running. */
+@ExportedBean
 public class UptimeInfo implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -17,6 +20,7 @@ public class UptimeInfo implements Serializable {
         this.seconds = seconds;
     }
 
+    @Exported
     public long getSeconds() {
         return seconds;
     }

@@ -6,8 +6,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.kohsuke.stapler.export.Exported;
+import org.kohsuke.stapler.export.ExportedBean;
 
 /** GPU model names detected on a node. */
+@ExportedBean
 public class GpuInfo implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -47,6 +50,7 @@ public class GpuInfo implements Serializable {
                 .orElse("N/A"));
     }
 
+    @Exported
     public String getName() {
         return name;
     }
@@ -55,6 +59,7 @@ public class GpuInfo implements Serializable {
         return getShortName();
     }
 
+    @Exported
     public String getShortName() {
         String cleanedName = TRADEMARK.matcher(name).replaceAll("");
         String model = findModel(NVIDIA_QUADRO_MODEL, cleanedName);

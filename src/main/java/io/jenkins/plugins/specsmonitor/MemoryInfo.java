@@ -2,8 +2,11 @@ package io.jenkins.plugins.specsmonitor;
 
 import java.io.Serializable;
 import java.util.Locale;
+import org.kohsuke.stapler.export.Exported;
+import org.kohsuke.stapler.export.ExportedBean;
 
 /** Total, free and available physical memory (RAM) of a node. */
+@ExportedBean
 public class MemoryInfo implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -37,14 +40,17 @@ public class MemoryInfo implements Serializable {
         this.availableBytes = availableBytes;
     }
 
+    @Exported
     public long getTotalBytes() {
         return totalBytes;
     }
 
+    @Exported
     public long getFreeBytes() {
         return freeBytes;
     }
 
+    @Exported
     public long getAvailableBytes() {
         return availableBytes;
     }
@@ -53,6 +59,7 @@ public class MemoryInfo implements Serializable {
      * Memory that applications can use right now: the available memory if known,
      * otherwise the free memory.
      */
+    @Exported
     public long getUsableBytes() {
         return availableBytes >= 0 ? availableBytes : freeBytes;
     }
