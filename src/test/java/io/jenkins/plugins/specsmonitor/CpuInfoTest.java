@@ -65,6 +65,26 @@ class CpuInfoTest {
     }
 
     @Test
+    void nameWithClockAppendsClockSpeed() {
+        assertEquals(
+                "AMD Ryzen 7 5800X 8-Core Processor @ 4.85GHz",
+                new CpuInfo("AMD Ryzen 7 5800X 8-Core Processor", 16, 4850).getNameWithClock());
+    }
+
+    @Test
+    void nameWithClockKeepsExistingClockSpeed() {
+        assertEquals(
+                "Intel(R) Core(TM) i7-8700 CPU @ 3.20GHz",
+                new CpuInfo("Intel(R) Core(TM) i7-8700 CPU @ 3.20GHz", 12, 4600).getNameWithClock());
+    }
+
+    @Test
+    void nameWithClockWithoutKnownClockSpeedIsName() {
+        assertEquals("Neoverse-V2", new CpuInfo("Neoverse-V2", 16).getNameWithClock());
+        assertNull(new CpuInfo(null, 2, 3000).getNameWithClock());
+    }
+
+    @Test
     void getThreadsReturnsThreadCount() {
         assertEquals(16, new CpuInfo("AMD Ryzen 9 7950X", 16).getThreads());
     }
@@ -80,7 +100,7 @@ class CpuInfoTest {
      */
     @Test
     void survivesSerializationRoundTrip() throws Exception {
-        CpuInfo original = new CpuInfo("AMD Ryzen 7 5800X 8-Core Processor", 16);
+        CpuInfo original = new CpuInfo("AMD Ryzen 7 5800X 8-Core Processor", 16, 4850);
 
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         try (ObjectOutputStream out = new ObjectOutputStream(bytes)) {
@@ -94,6 +114,7 @@ class CpuInfoTest {
 
         assertEquals(original.getName(), copy.getName());
         assertEquals(original.getThreads(), copy.getThreads());
+        assertEquals(original.getMaxMhz(), copy.getMaxMhz());
         assertEquals(original.getShortName(), copy.getShortName());
     }
 }

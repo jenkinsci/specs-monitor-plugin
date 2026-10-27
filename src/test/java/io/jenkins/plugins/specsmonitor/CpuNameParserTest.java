@@ -79,6 +79,36 @@ class CpuNameParserTest {
     }
 
     @Test
+    void lscpuMaxMhz() {
+        assertEquals(5400, CpuNameParser.maxMhzFromLscpu(LSCPU_X86 + "CPU max MHz:                     5400.0000\n"));
+        assertEquals(2201, CpuNameParser.maxMhzFromLscpu("CPU max MHz: 2200.5000\nCPU min MHz: 800.0000\n"));
+    }
+
+    @Test
+    void lscpuWithoutMaxMhzIsZero() {
+        assertEquals(0, CpuNameParser.maxMhzFromLscpu(LSCPU_X86));
+        assertEquals(0, CpuNameParser.maxMhzFromLscpu(null));
+    }
+
+    @Test
+    void procCpuinfoMhzX86() {
+        List<String> lines =
+                List.of("processor\t: 0", "model name\t: AMD EPYC 7763 64-Core Processor", "cpu MHz\t\t: 2445.406");
+        assertEquals(2445, CpuNameParser.mhzFromProcCpuinfo(lines));
+    }
+
+    @Test
+    void procCpuinfoMhzPower() {
+        List<String> lines = List.of("cpu             : POWER10", "clock           : 2950.000000MHz");
+        assertEquals(2950, CpuNameParser.mhzFromProcCpuinfo(lines));
+    }
+
+    @Test
+    void procCpuinfoWithoutMhzIsZero() {
+        assertEquals(0, CpuNameParser.mhzFromProcCpuinfo(List.of("processor : 0", "BogoMIPS : 2000.00")));
+    }
+
+    @Test
     void procCpuinfoAarch64HasNoReadableName() {
         List<String> lines = List.of(
                 "processor       : 0",

@@ -1,6 +1,7 @@
 package io.jenkins.plugins.specsmonitor;
 
 import java.io.Serializable;
+import java.util.Locale;
 import java.util.regex.Pattern;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
@@ -26,17 +27,48 @@ public class CpuInfo implements Serializable {
                     + "|\\b(?:Intel|AMD|Core|CPU|Processor)\\b", // vendor/filler words
             Pattern.CASE_INSENSITIVE);
 
+    /** Matches a clock speed that is already part of the CPU name, such as "3.20GHz". */
+    private static final Pattern CLOCK = Pattern.compile("\\d\\s*[GM]Hz", Pattern.CASE_INSENSITIVE);
+
     private final String name;
     private final int threads;
 
+    /** Clock speed in MHz, or 0 if unknown. Also 0 when sent by an older plugin version. */
+    private final int maxMhz;
+
     public CpuInfo(String name, int threads) {
+        this(name, threads, 0);
+    }
+
+    public CpuInfo(String name, int threads, int maxMhz) {
         this.name = name;
         this.threads = threads;
+        this.maxMhz = maxMhz;
     }
 
     @Exported
     public String getName() {
         return name;
+    }
+
+    /**
+     * Clock speed in MHz, or 0 if unknown. This is the maximum frequency where the node reports
+     * one, otherwise the nominal or current frequency.
+     */
+    @Exported
+    public int getMaxMhz() {
+        return maxMhz;
+    }
+
+    /**
+     * The full name with the clock speed appended in the style of Intel names
+     * ("@ 3.20GHz"), unless the name already contains one or the speed is unknown.
+     */
+    public String getNameWithClock() {
+        if (name == null || maxMhz <= 0 || CLOCK.matcher(name).find()) {
+            return name;
+        }
+        return String.format(Locale.ROOT, "%s @ %.2fGHz", name, maxMhz / 1000.0);
     }
 
     @Exported

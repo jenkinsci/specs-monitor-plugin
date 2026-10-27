@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -55,22 +56,25 @@ public class CpuMonitor extends NodeMonitor {
 
         private static final Logger LOGGER = Logger.getLogger(GetCpuInfo.class.getName());
 
+        /** CPU name and clock speed in MHz as read from the node; empty and 0 if unknown. */
+        private record Detected(String name, int mhz) {}
+
         @Override
         public CpuInfo call() throws IOException {
             int threads = Runtime.getRuntime().availableProcessors();
-            return new CpuInfo(detectName(), threads);
+            String os = System.getProperty("os.name", "").toLowerCase(Locale.ROOT);
+            Detected detected = new Detected("", 0);
+            if (os.startsWith("windows")) {
+                detected = detectWindows();
+            } else if (os.startsWith("mac")) {
+                detected = detectMac();
+            } else if (os.startsWith("linux")) {
+                detected = detectLinux();
+            }
+            return new CpuInfo(cleanName(detected.name()), threads, detected.mhz());
         }
 
-        private static String detectName() {
-            String os = System.getProperty("os.name", "").toLowerCase(Locale.ROOT);
-            String name = "";
-            if (os.startsWith("windows")) {
-                name = detectWindows();
-            } else if (os.startsWith("mac")) {
-                name = CommandRunner.tryRun("sysctl", "-n", "machdep.cpu.brand_string");
-            } else if (os.startsWith("linux")) {
-                name = detectLinux();
-            }
+        private static String cleanName(String name) {
             if (!name.isBlank()) {
                 return name.replaceAll("\\s+", " ").trim();
             }
@@ -85,39 +89,70 @@ public class CpuMonitor extends NodeMonitor {
             return "N/A";
         }
 
-        private static String detectWindows() {
+        private static Detected detectWindows() {
+            // Prints the name on the first line and the maximum clock speed in MHz on the
+            // second.
             String out = CommandRunner.tryRun(
                     "powershell.exe",
                     "-NoProfile",
                     "-NonInteractive",
                     "-Command",
-                    "(Get-CimInstance Win32_Processor | Select-Object -First 1).Name");
-            if (!out.isBlank()) {
-                return out;
+                    "$p = Get-CimInstance Win32_Processor | Select-Object -First 1; $p.Name; $p.MaxClockSpeed");
+            String[] lines = out.split("\\R");
+            if (!lines[0].isBlank()) {
+                return new Detected(lines[0], lines.length > 1 ? parseInt(lines[1].trim(), 10) : 0);
             }
-            out = CommandRunner.tryRun(
-                    "reg",
-                    "query",
-                    "HKLM\\HARDWARE\\DESCRIPTION\\System\\CentralProcessor\\0",
-                    "/v",
-                    "ProcessorNameString");
+            String key = "HKLM\\HARDWARE\\DESCRIPTION\\System\\CentralProcessor\\0";
+            out = CommandRunner.tryRun("reg", "query", key, "/v", "ProcessorNameString");
             int i = out.indexOf("REG_SZ");
-            return i >= 0 ? out.substring(i + "REG_SZ".length()).trim() : "";
+            String name = i >= 0 ? out.substring(i + "REG_SZ".length()).trim() : "";
+            // ~MHz holds the nominal clock speed as a hex DWORD, e.g. "0xc80".
+            out = CommandRunner.tryRun("reg", "query", key, "/v", "~MHz");
+            i = out.indexOf("0x");
+            int mhz = i >= 0 ? parseInt(out.substring(i + 2).trim(), 16) : 0;
+            return new Detected(name, mhz);
         }
 
-        private static String detectLinux() {
+        private static Detected detectMac() {
+            String name = CommandRunner.tryRun("sysctl", "-n", "machdep.cpu.brand_string");
+            // Only Intel Macs report a frequency (in Hz); Apple Silicon does not.
+            long hz = parseLong(CommandRunner.tryRun("sysctl", "-n", "hw.cpufrequency_max"));
+            return new Detected(name, (int) (hz / 1_000_000));
+        }
+
+        private static Detected detectLinux() {
             // lscpu knows how to name CPUs that /proc/cpuinfo only describes with numeric
             // IDs (e.g. aarch64).
-            String name = CpuNameParser.fromLscpu(CommandRunner.tryRun("lscpu"));
-            if (!name.isEmpty()) {
-                return name;
+            String lscpu = CommandRunner.tryRun("lscpu");
+            String name = CpuNameParser.fromLscpu(lscpu);
+            int mhz = CpuNameParser.maxMhzFromLscpu(lscpu);
+            if (!name.isEmpty() && mhz > 0) {
+                return new Detected(name, mhz);
             }
             try {
-                return CpuNameParser.fromProcCpuinfo(
-                        Files.readAllLines(Path.of("/proc/cpuinfo"), StandardCharsets.UTF_8));
+                List<String> cpuinfo = Files.readAllLines(Path.of("/proc/cpuinfo"), StandardCharsets.UTF_8);
+                return new Detected(
+                        name.isEmpty() ? CpuNameParser.fromProcCpuinfo(cpuinfo) : name,
+                        mhz > 0 ? mhz : CpuNameParser.mhzFromProcCpuinfo(cpuinfo));
             } catch (IOException e) {
                 LOGGER.log(Level.FINE, "Could not read /proc/cpuinfo", e);
-                return "";
+                return new Detected(name, mhz);
+            }
+        }
+
+        private static int parseInt(String s, int radix) {
+            try {
+                return Integer.parseInt(s, radix);
+            } catch (NumberFormatException e) {
+                return 0;
+            }
+        }
+
+        private static long parseLong(String s) {
+            try {
+                return Long.parseLong(s.trim());
+            } catch (NumberFormatException e) {
+                return 0;
             }
         }
     }

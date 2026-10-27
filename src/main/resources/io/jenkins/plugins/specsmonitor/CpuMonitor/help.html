@@ -9,6 +9,12 @@
         <code>N/A</code> is shown.
     </p>
     <p>
+        The tooltip shows the full CPU name. If the name does not contain a clock speed, the speed
+        reported by the node is appended, for example <code>@ 4.85GHz</code>. This is the maximum
+        frequency where available, otherwise the nominal or current frequency. Some nodes, such as
+        Apple Silicon Macs and many ARM machines, report no frequency at all.
+    </p>
+    <p>
         The thread count is the number of processors available to the Java process. It can be lower
         than the hardware value on nodes with CPU limits, such as containers.
     </p>
