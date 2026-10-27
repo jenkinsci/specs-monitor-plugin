@@ -84,7 +84,7 @@ class StorageActionTest {
         List<StorageVolumes.Volume> volumes = action.getVolumes();
 
         assertNotNull(volumes);
-        assertTrue(volumes.stream().anyMatch(StorageVolumes.Volume::isWorkspace));
+        assertTrue(volumes.stream().anyMatch(v -> v.isWorkspace()));
     }
 
     @Test
