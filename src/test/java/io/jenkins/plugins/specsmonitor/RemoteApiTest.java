@@ -23,6 +23,7 @@ class RemoteApiTest {
     void nodeListApiExportsMonitorData(JenkinsRule j) throws Exception {
         Computer computer = j.jenkins.toComputer();
         ColumnTestSupport.awaitData(CpuMonitor.DescriptorImpl.class, computer);
+        ColumnTestSupport.awaitData(CpuUsageMonitor.DescriptorImpl.class, computer);
         ColumnTestSupport.awaitData(GpuMonitor.DescriptorImpl.class, computer);
         ColumnTestSupport.awaitData(MemoryMonitor.DescriptorImpl.class, computer);
         ColumnTestSupport.awaitData(JvmMemoryMonitor.DescriptorImpl.class, computer);
@@ -36,6 +37,7 @@ class RemoteApiTest {
                 .getJSONObject("monitorData");
 
         assertTrue(data.getJSONObject(CpuMonitor.class.getName()).getInt("threads") > 0);
+        assertTrue(data.getJSONObject(CpuUsageMonitor.class.getName()).getDouble("systemPercent") >= 0);
         assertNotNull(data.getJSONObject(GpuMonitor.class.getName()).getString("name"));
         assertTrue(data.getJSONObject(MemoryMonitor.class.getName()).getLong("totalBytes") > 0);
         assertTrue(data.getJSONObject(JvmMemoryMonitor.class.getName()).getLong("totalBytes") > 0);

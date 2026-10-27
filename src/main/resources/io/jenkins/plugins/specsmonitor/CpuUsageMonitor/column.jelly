@@ -1,0 +1,13 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core">
+  <j:set var="high" value="${from.isHigh(data)}"/>
+  <td align="right" data="${data.systemPercent}" tooltip="${data.tooltip}">
+    <j:choose>
+      <j:when test="${data == null}">N/A</j:when>
+      <j:when test="${high}">
+        <span style="color: var(--warning-color, #e6a700); font-weight: bold;">&#9888; ${data.display}</span>
+      </j:when>
+      <j:otherwise>${data.display}</j:otherwise>
+    </j:choose>
+  </td>
+</j:jelly>

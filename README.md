@@ -9,6 +9,7 @@ agents are fast or slow without opening each one.
 | Monitor | Shows | Example |
 | --- | --- | --- |
 | [CPU](#cpu-monitor) | CPU model, hardware threads and benchmark score | `i7-13700K (16 threads)` |
+| [CPU Usage](#cpu-usage-monitor) | Current CPU usage, with a warning when the node is busy | `37%` |
 | [Free RAM](#memory-monitor) | Available memory, with a warning when it runs low | `15.6 GiB` |
 | [GPU](#gpu-monitor) | Graphics processor | `NVIDIA GeForce RTX 4070` |
 | [Free JVM Memory](#jvm-memory-monitor) | Free heap of the node's JVM, with a warning when it runs low | `1.6 GiB` |
@@ -67,6 +68,25 @@ contains the Blender device name and median score.
 - macOS: `sysctl`
 
 On other systems, or if the CPU name cannot be determined, the monitor shows `N/A`.
+
+## CPU usage monitor
+
+The **CPU Usage** monitor shows how busy the machine of every node is, for example `37%`. The usage
+is measured on the node over one second each time the monitor refreshes, so it is a snapshot. When it
+is above a configurable percentage (default 90%), it is shown in yellow with a warning symbol. Set the
+threshold in the monitor's configuration (`warnAbovePercent` in Configuration as Code); 100 turns the
+highlight off.
+
+Hovering over the value shows, for example, `System: 37% • JVM: 2%`:
+
+- **System:** usage of the whole machine, all processes included
+- **JVM:** the share used by the Jenkins agent process itself. Build steps run as separate
+  processes, so a high system value with a low JVM value means builds or other programs are busy.
+
+Inside a container, the usage is relative to the container's CPU limit.
+
+For graphs of CPU usage over time, the [Monitoring plugin](https://plugins.jenkins.io/monitoring/)
+is a good complement.
 
 ## Memory monitor
 
@@ -165,7 +185,7 @@ GPU information show `N/A`.
 
 1. Install the plugin.
 2. Go to **Manage Jenkins → Nodes → Configure Monitors** (gear icon).
-3. Enable **CPU**, **Free RAM**, **Free JVM Memory**, **GPU**, **Uptime** and/or **Connection**.
+3. Enable **CPU**, **CPU Usage**, **Free RAM**, **Free JVM Memory**, **GPU**, **Uptime** and/or **Connection**.
 4. A column appears in the node list for each monitor you enabled, for example `i7-13700K (16 threads)`
    for CPU or `15.6 GiB` for Free RAM. Hover over a value for more detail.
 
@@ -175,6 +195,8 @@ GPU information show `N/A`.
 jenkins:
   nodeMonitors:
     - cpuMonitor
+    - cpuUsageMonitor:
+        warnAbovePercent: 90
     - memoryMonitor
     - jvmMemoryMonitor
     - gpuMonitor
