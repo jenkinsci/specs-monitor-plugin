@@ -1,11 +1,48 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout">
   <!-- Evaluated first: it checks the permission before anything is rendered. -->
+  <j:set var="ram" value="${it.ram}"/>
   <j:set var="volumes" value="${it.volumes}"/>
-  <l:layout title="Storage">
+  <l:layout title="Specs">
     <st:include page="sidepanel.jelly" it="${it.computer}"/>
     <l:main-panel>
-      <h1>Storage</h1>
+      <h1>Specs</h1>
+      <h2>RAM</h2>
+      <p class="jenkins-description">
+        The memory of the node. The modules, with their type and speed, are only listed when the node can tell,
+        which it often cannot for virtual machines and containers, and on Linux unless the agent runs as root.
+      </p>
+      <j:choose>
+        <j:when test="${ram == null and it.computer.channel == null}">
+          <p class="jenkins-description">The RAM is only available while the node is connected to Jenkins.</p>
+        </j:when>
+        <j:when test="${ram == null}">
+          <p>The node did not report its RAM in time. Reload the page to try again.</p>
+        </j:when>
+        <j:otherwise>
+          <j:if test="${ram.modules.isEmpty()}">
+            <p>The node did not report its memory modules.</p>
+          </j:if>
+          <j:if test="${!ram.modules.isEmpty()}">
+            <table class="jenkins-table" style="width: auto; max-width: 100%;">
+              <thead>
+                <tr><th>Module</th><th>Size</th><th>Type</th><th>Speed</th></tr>
+              </thead>
+              <tbody>
+                <j:forEach var="m" items="${ram.modules}" varStatus="status">
+                  <tr>
+                    <td>${status.index + 1}</td>
+                    <td>${m.sizeDisplay}</td>
+                    <td>${m.typeDisplay}</td>
+                    <td>${m.speedDisplay}</td>
+                  </tr>
+                </j:forEach>
+              </tbody>
+            </table>
+          </j:if>
+        </j:otherwise>
+      </j:choose>
+      <h2>Storage volumes and drives</h2>
       <p class="jenkins-description">
         The drives and volumes the node can use, such as local disks, network shares and mounted
         volumes. The <b>Drive</b> column shows SSD or HDD when the node can tell, which it often cannot for network

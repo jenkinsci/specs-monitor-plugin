@@ -18,14 +18,16 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import jenkins.security.MasterToSlaveCallable;
 
-/** Adds a "Storage" page to the computer page of a node that lists the drives and volumes it can use. */
-public class StorageAction implements Action {
+/** Adds a "Specs" page to the computer page of a node that lists its RAM and the drives and volumes it can use. */
+public class SpecsAction implements Action {
 
-    private static final Logger LOGGER = Logger.getLogger(StorageAction.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(SpecsAction.class.getName());
+
+    private static final long RAM_TIMEOUT_SECONDS = 15;
 
     private final Computer computer;
 
-    public StorageAction(Computer computer) {
+    public SpecsAction(Computer computer) {
         this.computer = computer;
     }
 
@@ -40,12 +42,12 @@ public class StorageAction implements Action {
 
     @Override
     public String getDisplayName() {
-        return "Storage";
+        return "Specs";
     }
 
     @Override
     public String getUrlName() {
-        return "storage";
+        return "specs";
     }
 
     /**
@@ -53,18 +55,27 @@ public class StorageAction implements Action {
      * does not answer in time, since there is no meaningful last known value.
      */
     public List<StorageVolumes.Volume> getVolumes() {
+        // The node stops waiting for slow volumes itself, the extra time covers a node that does not answer.
+        return callOnNode(new GetVolumes(workspacePath()), StorageVolumes.TIMEOUT_SECONDS + 8, "storage");
+    }
+
+    /** Asks the node for its RAM. Returns {@code null} if the node is offline or does not answer in time. */
+    public RamSpecs getRam() {
+        return callOnNode(new GetRam(), RAM_TIMEOUT_SECONDS, "RAM");
+    }
+
+    private <T> T callOnNode(MasterToSlaveCallable<T, IOException> callable, long timeoutSeconds, String what) {
         computer.checkPermission(Computer.EXTENDED_READ);
         VirtualChannel channel = computer.getChannel();
         if (channel == null) {
             return null;
         }
-        Future<List<StorageVolumes.Volume>> lookup = null;
+        Future<T> lookup = null;
         try {
-            lookup = channel.callAsync(new GetVolumes(workspacePath()));
-            // The node stops waiting for slow volumes itself, this covers a node that does not answer.
-            return lookup.get(StorageVolumes.TIMEOUT_SECONDS + 8, TimeUnit.SECONDS);
+            lookup = channel.callAsync(callable);
+            return lookup.get(timeoutSeconds, TimeUnit.SECONDS);
         } catch (IOException | ExecutionException | TimeoutException e) {
-            LOGGER.log(Level.FINE, e, () -> "Could not read the storage of " + computer.getName());
+            LOGGER.log(Level.FINE, e, () -> "Could not read the " + what + " of " + computer.getName());
             if (lookup != null) {
                 lookup.cancel(true);
             }
@@ -96,11 +107,21 @@ public class StorageAction implements Action {
         }
     }
 
+    /** Runs on the node itself, so it reports the RAM the node has. */
+    private static final class GetRam extends MasterToSlaveCallable<RamSpecs, IOException> {
+        private static final long serialVersionUID = 1L;
+
+        @Override
+        public RamSpecs call() {
+            return RamSpecs.collect();
+        }
+    }
+
     @Extension
     public static class Factory extends TransientComputerActionFactory {
         @Override
         public Collection<? extends Action> createFor(Computer target) {
-            return List.of(new StorageAction(target));
+            return List.of(new SpecsAction(target));
         }
     }
 }
