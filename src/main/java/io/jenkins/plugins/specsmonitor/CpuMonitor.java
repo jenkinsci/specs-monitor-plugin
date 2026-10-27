@@ -51,7 +51,7 @@ public class CpuMonitor extends NodeMonitor {
      * Linux and macOS;
      * other systems report N/A.
      */
-    private static final class GetCpuInfo extends MasterToSlaveCallable<CpuInfo, IOException> {
+    static final class GetCpuInfo extends MasterToSlaveCallable<CpuInfo, IOException> {
         private static final long serialVersionUID = 1L;
 
         private static final Logger LOGGER = Logger.getLogger(GetCpuInfo.class.getName());

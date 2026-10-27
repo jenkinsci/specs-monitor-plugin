@@ -18,7 +18,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import jenkins.security.MasterToSlaveCallable;
 
-/** Adds a "Specs" page to the computer page of a node that lists its RAM and the drives and volumes it can use. */
+/** Adds a "Specs" page to the computer page of a node that lists its CPU, GPU, RAM and the drives and volumes it can use. */
 public class SpecsAction implements Action {
 
     private static final Logger LOGGER = Logger.getLogger(SpecsAction.class.getName());
@@ -57,6 +57,16 @@ public class SpecsAction implements Action {
     public List<StorageVolumes.Volume> getVolumes() {
         // The node stops waiting for slow volumes itself, the extra time covers a node that does not answer.
         return callOnNode(new GetVolumes(workspacePath()), StorageVolumes.TIMEOUT_SECONDS + 8, "storage");
+    }
+
+    /** Asks the node for its CPU. Returns {@code null} if the node is offline or does not answer in time. */
+    public CpuInfo getCpu() {
+        return callOnNode(new CpuMonitor.GetCpuInfo(), RAM_TIMEOUT_SECONDS, "CPU");
+    }
+
+    /** Asks the node for its GPU. Returns {@code null} if the node is offline or does not answer in time. */
+    public GpuInfo getGpu() {
+        return callOnNode(new GpuMonitor.GetGpuInfo(), RAM_TIMEOUT_SECONDS, "GPU");
     }
 
     /** Asks the node for its RAM. Returns {@code null} if the node is offline or does not answer in time. */
