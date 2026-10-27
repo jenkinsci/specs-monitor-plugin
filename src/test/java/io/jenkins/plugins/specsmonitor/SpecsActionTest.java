@@ -88,6 +88,13 @@ class SpecsActionTest {
     }
 
     @Test
+    void ramOfBuiltInNodeIsReported(JenkinsRule j) {
+        SpecsAction action = j.jenkins.toComputer().getAction(SpecsAction.class);
+
+        assertNotNull(action.getRam());
+    }
+
+    @Test
     void powerShellMemoryModulesAreParsed() {
         List<RamSpecs.Module> modules =
                 RamSpecs.fromPowerShell("17179869184|3200|3200|26\n8589934592||2667|34\n0|0|0|0\n");
@@ -103,9 +110,9 @@ class SpecsActionTest {
 
     @Test
     void dmidecodeMemoryModulesAreParsed() {
-        String output = "Memory Device\n	Size: 16 GB\n	Type: DDR4\n	Speed: 3200 MT/s\n"
-                + "	Configured Memory Speed: 2933 MT/s\n\n"
-                + "Memory Device\n	Size: No Module Installed\n	Type: Unknown\n";
+        String output = "Memory Device\n\tSize: 16 GB\n\tType: DDR4\n\tSpeed: 3200 MT/s\n"
+                + "\tConfigured Memory Speed: 2933 MT/s\n\n"
+                + "Memory Device\n\tSize: No Module Installed\n\tType: Unknown\n";
 
         List<RamSpecs.Module> modules = RamSpecs.fromKeyValues(output);
 

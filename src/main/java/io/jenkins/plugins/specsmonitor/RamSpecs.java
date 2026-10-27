@@ -1,7 +1,6 @@
 package io.jenkins.plugins.specsmonitor;
 
 import java.io.Serializable;
-import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -10,9 +9,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * The RAM of a node: its total size and, when the node can tell, the memory modules with their type and
- * speed. Reading the modules is best effort: VMs, containers and unprivileged users on Linux often get
- * no answer.
+ * The RAM modules of a node with their size, type and speed. This is best effort: VMs, containers and
+ * unprivileged users on Linux often get no answer.
  */
 public final class RamSpecs implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -29,21 +27,10 @@ public final class RamSpecs implements Serializable {
             20, "DDR", 21, "DDR2", 24, "DDR3", 26, "DDR4", 27, "LPDDR", 28, "LPDDR2", 29, "LPDDR3", 30, "LPDDR4", 34,
             "DDR5", 35, "LPDDR5");
 
-    private final long totalBytes;
     private final ArrayList<Module> modules;
 
-    RamSpecs(long totalBytes, List<Module> modules) {
-        this.totalBytes = totalBytes;
+    RamSpecs(List<Module> modules) {
         this.modules = new ArrayList<>(modules);
-    }
-
-    /** Total physical memory in bytes, or a value {@code <= 0} if unknown. */
-    long getTotalBytes() {
-        return totalBytes;
-    }
-
-    public String getTotalDisplay() {
-        return totalBytes > 0 ? MemoryInfo.format(totalBytes) : "N/A";
     }
 
     public List<Module> getModules() {
@@ -63,18 +50,7 @@ public final class RamSpecs implements Serializable {
             // Only answers when run as root.
             modules = fromKeyValues(CommandRunner.tryRun("dmidecode", "-t", "memory"));
         }
-        long total = modules.stream().mapToLong(Module::getSizeBytes).sum();
-        if (total <= 0) {
-            total = totalFromJvm();
-        }
-        return new RamSpecs(total, modules);
-    }
-
-    private static long totalFromJvm() {
-        if (ManagementFactory.getOperatingSystemMXBean() instanceof com.sun.management.OperatingSystemMXBean bean) {
-            return bean.getTotalMemorySize();
-        }
-        return -1;
+        return new RamSpecs(modules);
     }
 
     /** Parses lines of {@code capacity|configured speed|speed|SMBIOS type}, one per module. */
