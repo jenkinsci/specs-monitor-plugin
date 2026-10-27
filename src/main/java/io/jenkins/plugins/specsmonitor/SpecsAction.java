@@ -17,6 +17,8 @@ import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jenkins.security.MasterToSlaveCallable;
+import org.kohsuke.stapler.HttpResponse;
+import org.kohsuke.stapler.HttpResponses;
 
 /** Adds a "Specs" page to the computer page of a node that lists its CPU, GPU, RAM and the drives and volumes it can use. */
 public class SpecsAction implements Action {
@@ -48,6 +50,29 @@ public class SpecsAction implements Action {
     @Override
     public String getUrlName() {
         return "specs";
+    }
+
+    /** The sections are rendered on their own, so the page does not wait for the node. */
+    public HttpResponse doCpuSection() {
+        return HttpResponses.forwardToView(this, "cpuSection.jelly");
+    }
+
+    public HttpResponse doGpuSection() {
+        return HttpResponses.forwardToView(this, "gpuSection.jelly");
+    }
+
+    public HttpResponse doRamSection() {
+        return HttpResponses.forwardToView(this, "ramSection.jelly");
+    }
+
+    public HttpResponse doVolumesSection() {
+        return HttpResponses.forwardToView(this, "volumesSection.jelly");
+    }
+
+    /** Fails unless the user may see the specs, so the page can check this before it loads its sections. */
+    public boolean checkPermitted() {
+        computer.checkPermission(Computer.EXTENDED_READ);
+        return true;
     }
 
     /**

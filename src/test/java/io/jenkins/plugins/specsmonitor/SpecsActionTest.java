@@ -146,4 +146,19 @@ class SpecsActionTest {
             assertEquals("Specs", page.getElementsByTagName("h1").get(0).getTextContent());
         }
     }
+
+    @Test
+    void sectionsRenderSeparately(JenkinsRule j) throws Exception {
+        try (JenkinsRule.WebClient wc = j.createWebClient()) {
+            for (String section : List.of("cpuSection", "gpuSection", "ramSection", "volumesSection")) {
+                assertEquals(
+                        200,
+                        wc.goTo("computer/(built-in)/specs/" + section, null)
+                                .getWebResponse()
+                                .getStatusCode(),
+                        section);
+            }
+            assertNotNull(wc.goTo("computer/(built-in)/specs/").getElementsByTagName("script"));
+        }
+    }
 }
