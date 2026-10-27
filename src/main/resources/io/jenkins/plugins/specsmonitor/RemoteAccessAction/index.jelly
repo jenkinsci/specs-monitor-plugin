@@ -25,9 +25,8 @@
             Opens a <b>Remote Desktop connection</b> for ${target.ip}.
           </p>
           <br />
-          <p>Download and open Remote Desktop manually: <a class="jenkins-button jenkins-button--primary" href="rdp">Download .rdp file</a></p>
           <br />
-          <p>Open Remote Desktop directly: <a class="jenkins-button" href="${target.rdpUri}">Open rdp:// link</a></p>
+          <p><a class="jenkins-button jenkins-button--primary" href="rdp">Download .rdp file</a> <a class="jenkins-button" style="margin-left: 1rem;" href="${target.rdpUri}">Open rdp:// link</a></p>
           <p class="jenkins-description">
             The <code>rdp://</code> link only works if a client that handles it is installed, such as the
             Microsoft Remote Desktop or Windows App client. The built-in Windows client does not, so use the
@@ -40,10 +39,34 @@
             this command in a terminal:
           </p>
           <p><code>${target.sshCommand}</code></p>
-          <a class="jenkins-button jenkins-button--primary" href="${target.sshUri}">Connect with SSH</a>
+          <br />
+          <br />
+          <p><a class="jenkins-button jenkins-button--primary" href="${target.sshUri}">Connect with SSH</a></p>
         </j:when>
         <j:otherwise>
           <p>Remote Access is only offered for Windows, Linux and macOS nodes.</p>
+        </j:otherwise>
+      </j:choose>
+      <j:set var="users" value="${it.connectedUsers}"/>
+      <h2>Connected users</h2>
+      <j:choose>
+        <j:when test="${users == null}">
+          <p class="jenkins-description">The connected users are only available while the node is connected to Jenkins.</p>
+        </j:when>
+        <j:when test="${users.isEmpty()}">
+          <p>No users are connected to the node.</p>
+        </j:when>
+        <j:otherwise>
+          <table class="jenkins-table" style="width: auto; min-width: 20rem; max-width: 100%;">
+            <thead>
+              <tr><th>User</th><th>Session</th></tr>
+            </thead>
+            <tbody>
+              <j:forEach var="s" items="${users}">
+                <tr><td>${s.user}</td><td>${s.detail}</td></tr>
+              </j:forEach>
+            </tbody>
+          </table>
         </j:otherwise>
       </j:choose>
     </l:main-panel>

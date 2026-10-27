@@ -68,6 +68,26 @@ public class RemoteAccessAction implements Action {
         return lastKnownTarget();
     }
 
+    /**
+     * Asks the node which users are logged in right now. Returns {@code null} if the node is
+     * offline or does not answer, since there is no meaningful last known value.
+     */
+    public List<ConnectedUsers.Session> getConnectedUsers() {
+        computer.checkPermission(Computer.CONFIGURE);
+        VirtualChannel channel = computer.getChannel();
+        if (channel == null) {
+            return null;
+        }
+        try {
+            return channel.call(new GetConnectedUsers());
+        } catch (IOException e) {
+            LOGGER.log(Level.FINE, e, () -> "Could not read the users of " + computer.getName());
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        return null;
+    }
+
     /** The address the Connection monitor last collected from the node, which it keeps while offline. */
     private RemoteTarget lastKnownTarget() {
         ConnectionInfo info = ExtensionList.lookupSingleton(ConnectionMonitor.DescriptorImpl.class)
@@ -97,6 +117,17 @@ public class RemoteAccessAction implements Action {
         public RemoteTarget call() {
             return new RemoteTarget(
                     RemoteTarget.Family.fromOsName(System.getProperty("os.name")), IpAddressFinder.find());
+        }
+    }
+
+    /** Runs on the node itself, so it reports the users logged in to the node. */
+    private static final class GetConnectedUsers
+            extends MasterToSlaveCallable<List<ConnectedUsers.Session>, IOException> {
+        private static final long serialVersionUID = 1L;
+
+        @Override
+        public List<ConnectedUsers.Session> call() {
+            return ConnectedUsers.collect(RemoteTarget.Family.fromOsName(System.getProperty("os.name")));
         }
     }
 
