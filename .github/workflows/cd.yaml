@@ -1,8 +1,20 @@
 # Note: additional setup is required, see https://www.jenkins.io/redirect/continuous-delivery-of-plugins
-
+#
+# Releases are not automatic: merging a pull request only updates the draft release notes.
+# To publish a release, run this workflow from the Actions tab (Run workflow) with
+# "validate_only" unchecked. It releases everything merged since the last release.
+---
 name: cd
 on:
   workflow_dispatch:
+    inputs:
+      validate_only:
+        required: false
+        type: boolean
+        description: |
+          Run validation with release drafter only
+          → Skip the release job
+        default: false
   check_run:
     types:
       - completed
@@ -14,6 +26,10 @@ permissions:
 jobs:
   maven-cd:
     uses: jenkins-infra/github-reusable-workflows/.github/workflows/maven-cd.yml@c2470861b1ad94810dc0d207b011e0b57bb91bbb # v1
+    with:
+      # Any check_run only validates and drafts the release notes, so the release job is skipped.
+      # A manual run releases, unless validate_only is checked.
+      validate_only: ${{ inputs.validate_only == true || github.event_name == 'check_run' }}
     secrets:
       MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
       MAVEN_TOKEN: ${{ secrets.MAVEN_TOKEN }}
