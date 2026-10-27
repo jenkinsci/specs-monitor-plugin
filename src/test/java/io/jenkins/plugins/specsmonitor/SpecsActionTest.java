@@ -6,11 +6,14 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import hudson.model.Computer;
 import java.util.List;
 import java.util.Map;
+import jenkins.model.Jenkins;
 import org.htmlunit.html.HtmlPage;
 import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.JenkinsRule;
+import org.jvnet.hudson.test.MockAuthorizationStrategy;
 import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 
 @WithJenkins
@@ -159,6 +162,37 @@ class SpecsActionTest {
                         section);
             }
             assertNotNull(wc.goTo("computer/(built-in)/specs/").getElementsByTagName("script"));
+        }
+    }
+
+    @Test
+    void sectionsNeedExtendedRead(JenkinsRule j) throws Exception {
+        j.jenkins.setSecurityRealm(j.createDummySecurityRealm());
+        j.jenkins.setAuthorizationStrategy(new MockAuthorizationStrategy()
+                .grant(Jenkins.READ, Computer.EXTENDED_READ)
+                .everywhere()
+                .to("admin")
+                .grant(Jenkins.READ)
+                .everywhere()
+                .to("reader"));
+        try (JenkinsRule.WebClient wc = j.createWebClient().withThrowExceptionOnFailingStatusCode(false)) {
+            wc.login("reader");
+            for (String section : List.of("cpuSection", "gpuSection", "ramSection", "volumesSection")) {
+                assertEquals(
+                        403,
+                        wc.goTo("computer/(built-in)/specs/" + section, null)
+                                .getWebResponse()
+                                .getStatusCode(),
+                        section);
+            }
+        }
+        try (JenkinsRule.WebClient wc = j.createWebClient()) {
+            wc.login("admin");
+            assertEquals(
+                    200,
+                    wc.goTo("computer/(built-in)/specs/cpuSection", null)
+                            .getWebResponse()
+                            .getStatusCode());
         }
     }
 }

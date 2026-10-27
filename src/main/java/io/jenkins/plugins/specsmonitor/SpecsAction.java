@@ -19,6 +19,7 @@ import java.util.logging.Logger;
 import jenkins.security.MasterToSlaveCallable;
 import org.kohsuke.stapler.HttpResponse;
 import org.kohsuke.stapler.HttpResponses;
+import org.kohsuke.stapler.verb.GET;
 
 /** Adds a "Specs" page to the computer page of a node that lists its CPU, GPU, RAM and the drives and volumes it can use. */
 public class SpecsAction implements Action {
@@ -53,19 +54,27 @@ public class SpecsAction implements Action {
     }
 
     /** The sections are rendered on their own, so the page does not wait for the node. */
+    @GET
     public HttpResponse doCpuSection() {
+        computer.checkPermission(Computer.EXTENDED_READ);
         return HttpResponses.forwardToView(this, "cpuSection.jelly");
     }
 
+    @GET
     public HttpResponse doGpuSection() {
+        computer.checkPermission(Computer.EXTENDED_READ);
         return HttpResponses.forwardToView(this, "gpuSection.jelly");
     }
 
+    @GET
     public HttpResponse doRamSection() {
+        computer.checkPermission(Computer.EXTENDED_READ);
         return HttpResponses.forwardToView(this, "ramSection.jelly");
     }
 
+    @GET
     public HttpResponse doVolumesSection() {
+        computer.checkPermission(Computer.EXTENDED_READ);
         return HttpResponses.forwardToView(this, "volumesSection.jelly");
     }
 
