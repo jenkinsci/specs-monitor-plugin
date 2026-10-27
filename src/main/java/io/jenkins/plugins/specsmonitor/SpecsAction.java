@@ -37,7 +37,7 @@ public class SpecsAction implements Action {
 
     @Override
     public String getIconFileName() {
-        return computer.hasPermission(Computer.EXTENDED_READ) ? "symbol-computer" : null;
+        return computer.hasPermission(Computer.EXTENDED_READ) ? "symbol-hardware-chip plugin-ionicons-api" : null;
     }
 
     @Override

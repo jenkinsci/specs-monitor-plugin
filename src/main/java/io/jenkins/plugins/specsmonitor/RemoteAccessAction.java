@@ -35,7 +35,7 @@ public class RemoteAccessAction implements Action {
 
     @Override
     public String getIconFileName() {
-        return computer.hasPermission(Computer.CONFIGURE) ? "symbol-terminal" : null;
+        return computer.hasPermission(Computer.CONFIGURE) ? "symbol-cloud" : null;
     }
 
     @Override

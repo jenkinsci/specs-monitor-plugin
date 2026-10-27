@@ -46,6 +46,14 @@
     <hpi.strictBundledArtifacts>true</hpi.strictBundledArtifacts>
   </properties>
 
+  <dependencies>
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>ionicons-api</artifactId>
+      <version>94.vcc3065403257</version>
+    </dependency>
+  </dependencies>
+
   <repositories>
     <repository>
       <id>repo.jenkins-ci.org</id>
