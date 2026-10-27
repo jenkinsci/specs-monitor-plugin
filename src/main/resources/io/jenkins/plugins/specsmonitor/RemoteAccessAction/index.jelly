@@ -51,7 +51,7 @@
       <h2>Connected users</h2>
       <j:choose>
         <j:when test="${users == null}">
-          <p class="jenkins-description">The connected users are only available while the node is online.</p>
+          <p class="jenkins-description">The connected users are only available while the node is connected to Jenkins.</p>
         </j:when>
         <j:when test="${users.isEmpty()}">
           <p>No users are connected to the node.</p>
