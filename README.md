@@ -124,6 +124,13 @@ address is the one the node itself reports (see the
 [Connection monitor](#connection-monitor)). While a node is offline, the last address it reported
 is shown. Credentials are never stored or sent by Jenkins.
 
+Below the connection options, the page lists the **Connected users**: the users who currently have
+a session on the node, so you can see whether someone is logged in before you connect and take
+over their machine. Windows nodes report them with `query user` (user, session such as `rdp-tcp#0`,
+and state such as `Active`), Linux and macOS nodes with `who` (user, terminal and login time; a user
+logged in more than once is listed once with all terminals). The list is read from the node when the
+page opens, so it is only available while the node is connected to Jenkins.
+
 ## GPU monitor
 
 The **GPU** monitor shows the first graphics processor model returned by the OS inventory for each
