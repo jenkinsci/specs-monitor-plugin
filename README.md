@@ -131,6 +131,27 @@ and state such as `Active`), Linux and macOS nodes with `who` (user, terminal an
 logged in more than once is listed once with all terminals). The list is read from the node when the
 page opens, so it is only available while the node is connected to Jenkins.
 
+## Storage
+
+Each node's page also has a **Storage** link in its sidebar (requires the *Extended Read* permission
+on the node). It lists the drives and volumes the node can use: mount point or drive letter, device,
+file system, size and free space (with the percentage). The volume that holds the node's working
+directory, where builds run, is marked **Builds**, and read-only volumes are flagged. This complements
+Jenkins' own free disk space column, which only reports that one volume.
+
+- Windows: every drive letter, including mapped network drives
+- Linux and macOS: every mounted file system, including network shares, Docker volumes and the
+  container's root file system
+- The **Drive** column shows `SSD` (with `NVMe` where known) or `HDD` when the node can tell: from
+  `Get-PhysicalDisk` on Windows, `/sys/block/*/queue/rotational` on Linux and `diskutil info` on macOS.
+  The column is empty when the node does not say, which is common for network shares, containers and
+  virtual disks. Some VMs also report a virtual disk as an HDD whatever hardware is behind it.
+- Kernel and container internals (`proc`, `tmpfs`, `squashfs` and similar) and drives without media are
+  left out
+
+The list is read from the node when the page opens, so it is only available while the node is connected
+to Jenkins. In a container, the root file system reports the free space of the host disk behind it.
+
 ## GPU monitor
 
 The **GPU** monitor shows the first graphics processor model returned by the OS inventory for each
