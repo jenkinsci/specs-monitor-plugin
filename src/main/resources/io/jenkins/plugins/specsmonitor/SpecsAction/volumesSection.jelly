@@ -1,0 +1,38 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler">
+  <j:set var="volumes" value="${it.volumes}"/>
+  <j:choose>
+    <j:when test="${volumes == null and it.computer.channel == null}">
+      <p class="jenkins-description">The storage is only available while the node is connected to Jenkins.</p>
+    </j:when>
+    <j:when test="${volumes == null}">
+      <p>The node did not report its storage in time. Reload the page to try again.</p>
+    </j:when>
+    <j:when test="${volumes.isEmpty()}">
+      <p>No drives or volumes were found on the node.</p>
+    </j:when>
+    <j:otherwise>
+      <table class="jenkins-table" style="width: auto; max-width: 100%;">
+        <thead>
+          <tr><th>Mount</th><th>Device</th><th>Type</th><th>Drive</th><th>Size</th><th>Free</th><th></th></tr>
+        </thead>
+        <tbody>
+          <j:forEach var="v" items="${volumes}">
+            <tr>
+              <td>${v.mount}</td>
+              <td>${v.name}</td>
+              <td>${v.type}</td>
+              <td>${v.driveType}</td>
+              <td>${v.totalDisplay}</td>
+              <td>${v.freeDisplay}</td>
+              <td>
+                <j:if test="${v.workspace}"><b>Builds</b></j:if>
+                <j:if test="${v.readOnly}"> read-only</j:if>
+              </td>
+            </tr>
+          </j:forEach>
+        </tbody>
+      </table>
+    </j:otherwise>
+  </j:choose>
+</j:jelly>

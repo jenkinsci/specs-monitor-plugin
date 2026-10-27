@@ -60,6 +60,11 @@ public class CpuInfo implements Serializable {
         return maxMhz;
     }
 
+    /** The clock speed in GHz such as "3.20 GHz", or "N/A" if unknown. */
+    public String getClockDisplay() {
+        return maxMhz > 0 ? String.format(Locale.ROOT, "%.2f GHz", maxMhz / 1000.0) : "N/A";
+    }
+
     /**
      * The full name with the clock speed appended in the style of Intel names
      * ("@ 3.20GHz"), unless the name already contains one or the speed is unknown.

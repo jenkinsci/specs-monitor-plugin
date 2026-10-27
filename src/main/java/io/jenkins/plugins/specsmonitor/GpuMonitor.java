@@ -36,7 +36,7 @@ public class GpuMonitor extends NodeMonitor {
         }
     }
 
-    private static final class GetGpuInfo extends MasterToSlaveCallable<GpuInfo, IOException> {
+    static final class GetGpuInfo extends MasterToSlaveCallable<GpuInfo, IOException> {
         private static final long serialVersionUID = 1L;
 
         private static final String WINDOWS_SCRIPT = "Get-CimInstance Win32_VideoController | "

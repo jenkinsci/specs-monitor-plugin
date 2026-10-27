@@ -1,0 +1,19 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler">
+  <j:set var="gpu" value="${it.gpu}"/>
+  <j:choose>
+    <j:when test="${gpu == null and it.computer.channel == null}">
+      <p class="jenkins-description">The GPU is only available while the node is connected to Jenkins.</p>
+    </j:when>
+    <j:when test="${gpu == null}">
+      <p>The node did not report its GPU in time. Reload the page to try again.</p>
+    </j:when>
+    <j:otherwise>
+      <dl style="display: grid; grid-template-columns: max-content 1fr; gap: 0.5rem 2rem; margin: 0.5rem 0 1.5rem; padding: 1rem 1.25rem; max-width: 40rem; border: 1px solid var(--card-border-color, var(--light-grey)); border-radius: 0.75rem; background: var(--card-background, transparent);">
+        <dt style="margin: 0; color: var(--text-color-secondary);">Name</dt><dd style="margin: 0; font-weight: 500; overflow-wrap: anywhere;">${gpu.name}</dd>
+        <dt style="margin: 0; color: var(--text-color-secondary);">Model</dt><dd style="margin: 0; font-weight: 500; overflow-wrap: anywhere;">${gpu.shortName}</dd>
+        <dt style="margin: 0; color: var(--text-color-secondary);">Score</dt><dd style="margin: 0; font-weight: 500; overflow-wrap: anywhere;">${gpu.score != null ? gpu.score : 'N/A'}</dd>
+      </dl>
+    </j:otherwise>
+  </j:choose>
+</j:jelly>

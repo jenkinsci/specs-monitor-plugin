@@ -1,0 +1,30 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout">
+  <!-- Checks the permission before anything is rendered. The sections ask the node, so they are loaded by specs.js. -->
+  <j:set var="allowed" value="${it.checkPermitted()}"/>
+  <l:layout title="Specs">
+    <st:include page="sidepanel.jelly" it="${it.computer}"/>
+    <l:main-panel>
+      <h1>Specs</h1>
+      <h2>CPU</h2>
+      <div data-specs-section="${rootURL}/${it.computer.url}${it.urlName}/cpuSection">Loading…</div>
+      <h2>GPU</h2>
+      <div data-specs-section="${rootURL}/${it.computer.url}${it.urlName}/gpuSection">Loading…</div>
+      <h2>RAM</h2>
+      <p class="jenkins-description">
+        The memory of the node. The modules, with their type and speed, are only listed when the node can tell,
+        which it often cannot for virtual machines and containers, and on Linux unless the agent runs as root.
+      </p>
+      <div data-specs-section="${rootURL}/${it.computer.url}${it.urlName}/ramSection">Loading…</div>
+      <h2>Storage volumes and drives</h2>
+      <p class="jenkins-description">
+        The drives and volumes the node can use, such as local disks, network shares and mounted
+        volumes. The <b>Drive</b> column shows SSD or HDD when the node can tell, which it often cannot for network
+        shares, virtual disks and containers. The volume marked <b>Builds</b> holds the working directory
+        of the node.
+      </p>
+      <div data-specs-section="${rootURL}/${it.computer.url}${it.urlName}/volumesSection">Loading…</div>
+      <script src="${resURL}/plugin/specs-monitor/specs.js" defer="defer"></script>
+    </l:main-panel>
+  </l:layout>
+</j:jelly>

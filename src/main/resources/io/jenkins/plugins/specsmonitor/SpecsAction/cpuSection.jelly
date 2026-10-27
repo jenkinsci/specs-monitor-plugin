@@ -1,0 +1,20 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler">
+  <j:set var="cpu" value="${it.cpu}"/>
+  <j:choose>
+    <j:when test="${cpu == null and it.computer.channel == null}">
+      <p class="jenkins-description">The CPU is only available while the node is connected to Jenkins.</p>
+    </j:when>
+    <j:when test="${cpu == null}">
+      <p>The node did not report its CPU in time. Reload the page to try again.</p>
+    </j:when>
+    <j:otherwise>
+      <dl style="display: grid; grid-template-columns: max-content 1fr; gap: 0.5rem 2rem; margin: 0.5rem 0 1.5rem; padding: 1rem 1.25rem; max-width: 40rem; border: 1px solid var(--card-border-color, var(--light-grey)); border-radius: 0.75rem; background: var(--card-background, transparent);">
+        <dt style="margin: 0; color: var(--text-color-secondary);">Name</dt><dd style="margin: 0; font-weight: 500; overflow-wrap: anywhere;">${cpu.name}</dd>
+        <dt style="margin: 0; color: var(--text-color-secondary);">Clock speed</dt><dd style="margin: 0; font-weight: 500; overflow-wrap: anywhere;">${cpu.clockDisplay}</dd>
+        <dt style="margin: 0; color: var(--text-color-secondary);">Threads</dt><dd style="margin: 0; font-weight: 500; overflow-wrap: anywhere;">${cpu.threads}</dd>
+        <dt style="margin: 0; color: var(--text-color-secondary);">Score</dt><dd style="margin: 0; font-weight: 500; overflow-wrap: anywhere;">${cpu.score != null ? cpu.score : 'N/A'}</dd>
+      </dl>
+    </j:otherwise>
+  </j:choose>
+</j:jelly>
