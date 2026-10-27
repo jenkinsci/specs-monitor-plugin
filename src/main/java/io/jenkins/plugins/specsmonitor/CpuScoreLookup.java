@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.function.UnaryOperator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -30,7 +31,7 @@ final class CpuScoreLookup {
         return score == null ? null : formatScore(score);
     }
 
-    private static String normalizeName(String displayName) {
+    static String normalizeName(String displayName) {
         return displayName.toLowerCase(Locale.ROOT);
     }
 
@@ -42,6 +43,11 @@ final class CpuScoreLookup {
     }
 
     static Map<String, BigDecimal> parseCsv(Reader source) throws IOException {
+        return parseCsv(source, name -> normalizeName(new CpuInfo(name, 0).getShortName()));
+    }
+
+    /** Parses a "Device Name,Median Score" CSV; the first row per key wins and a null or empty key skips the row. */
+    static Map<String, BigDecimal> parseCsv(Reader source, UnaryOperator<String> keyFunction) throws IOException {
         Map<String, BigDecimal> scores = new HashMap<>();
         BufferedReader reader = source instanceof BufferedReader ? (BufferedReader) source : new BufferedReader(source);
         try (reader) {
@@ -61,12 +67,12 @@ final class CpuScoreLookup {
                 if (fields == null || fields.size() <= Math.max(deviceNameIndex, medianScoreIndex)) {
                     continue;
                 }
-                String displayName = new CpuInfo(fields.get(deviceNameIndex).trim(), 0).getShortName();
+                String key = keyFunction.apply(fields.get(deviceNameIndex).trim());
                 try {
                     BigDecimal score =
                             new BigDecimal(fields.get(medianScoreIndex).trim());
-                    if (!displayName.isEmpty() && score.signum() >= 0) {
-                        scores.putIfAbsent(normalizeName(displayName), score);
+                    if (key != null && !key.isEmpty() && score.signum() >= 0) {
+                        scores.putIfAbsent(key, score);
                     }
                 } catch (NumberFormatException ignored) {
                     // Ignore invalid rows so one bad score does not disable the lookup.

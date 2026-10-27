@@ -1,6 +1,7 @@
 package io.jenkins.plugins.specsmonitor;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.junit.jupiter.api.Test;
 
@@ -108,7 +109,16 @@ class GpuInfoTest {
 
         GpuInfo info = new GpuInfo("NVIDIA GeForce RTX 4060 Laptop GPU");
         assertEquals("NVIDIA GeForce RTX 4060 Laptop GPU", info.getName());
-        assertEquals("NVIDIA GeForce RTX 4060 Laptop GPU", info.getTooltip());
+        assertEquals("NVIDIA GeForce RTX 4060 Laptop GPU • Score: 2,923.74", info.getTooltip());
+    }
+
+    @Test
+    void scoreMatchesFullNameBeforeShortName() {
+        assertEquals("11,553.09", new GpuInfo("NVIDIA GeForce RTX 4090").getScore());
+        assertEquals("17,418.97", new GpuInfo("NVIDIA GeForce RTX 5090 D").getScore());
+        assertEquals("11,553.09", new GpuInfo("NVIDIA Corporation AD102 [GeForce RTX 4090]").getScore());
+        assertNull(new GpuInfo("Some Unknown GPU").getScore());
+        assertEquals("Some Unknown GPU", new GpuInfo("Some Unknown GPU").getTooltip());
     }
 
     private static void assertShortName(String fullName, String expected) {

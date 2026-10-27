@@ -85,8 +85,14 @@ public class GpuInfo implements Serializable {
         return cleanedName.replaceAll("\\s+", " ").trim();
     }
 
+    @Exported
+    public String getScore() {
+        return GpuScoreLookup.formatFor(name, getShortName());
+    }
+
     public String getTooltip() {
-        return getName();
+        String score = getScore();
+        return score == null ? getName() : getName() + " • Score: " + score;
     }
 
     private static String findModel(Pattern pattern, String name) {
