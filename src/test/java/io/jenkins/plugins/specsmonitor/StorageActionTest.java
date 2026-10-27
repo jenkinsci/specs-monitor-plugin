@@ -73,6 +73,8 @@ class StorageActionTest {
         assertNull(DriveTypes.forLinux("overlay"));
         assertNull(DriveTypes.forLinux("//nas/share"));
         assertNull(DriveTypes.forLinux(null));
+        assertNull(DriveTypes.forMac("/Volumes/share", "//user@nas/share"));
+        assertNull(DriveTypes.forMac("/", null));
     }
 
     @Test

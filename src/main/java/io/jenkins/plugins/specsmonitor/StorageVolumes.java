@@ -12,6 +12,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.function.BiFunction;
 
 /** Reads the drives and mounted storage a node has access to, such as local disks, network shares and volumes. */
@@ -124,69 +130,98 @@ public final class StorageVolumes {
     }
 
     /**
+     * How long the lookup of all volumes may take. A dead network mount does not fail but blocks,
+     * so every volume is read on its own thread and the slow ones are left out.
+     */
+    static final long TIMEOUT_SECONDS = 12;
+
+    /**
      * Lists the volumes of the machine this runs on.
      *
      * @param workspacePath the working directory of the node, used to mark the volume builds run on,
      *     or {@code null}
      */
     static List<Volume> collect(String workspacePath) {
-        FileStore workspaceStore = storeOf(workspacePath);
-        boolean windows =
-                System.getProperty("os.name", "").toLowerCase(Locale.ROOT).startsWith("windows");
-        boolean mac = System.getProperty("os.name", "").toLowerCase(Locale.ROOT).startsWith("mac");
-        List<Volume> volumes = new ArrayList<>();
-        if (windows) {
-            Map<String, String> types = DriveTypes.forWindows();
-            for (File root : File.listRoots()) {
-                String letter = root.getPath().substring(0, 1).toUpperCase(Locale.ROOT);
-                add(volumes, root.toPath(), root.getPath(), workspaceStore, (mount, device) -> types.get(letter));
+        long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(TIMEOUT_SECONDS);
+        String os = System.getProperty("os.name", "").toLowerCase(Locale.ROOT);
+        ExecutorService executor = Executors.newCachedThreadPool(r -> {
+            Thread t = new Thread(r, "specs-monitor storage lookup");
+            t.setDaemon(true);
+            return t;
+        });
+        try {
+            Future<FileStore> workspace = executor.submit(() -> storeOf(workspacePath));
+            List<Future<Volume>> lookups = new ArrayList<>();
+            if (os.startsWith("windows")) {
+                Future<Map<String, String>> types = executor.submit(DriveTypes::forWindows);
+                for (File root : File.listRoots()) {
+                    String letter = root.getPath().substring(0, 1).toUpperCase(Locale.ROOT);
+                    lookups.add(executor.submit(() -> read(
+                            Files.getFileStore(root.toPath()),
+                            root.getPath(),
+                            await(workspace, deadline),
+                            (mount, device) -> {
+                                Map<String, String> byLetter = await(types, deadline);
+                                return byLetter == null ? null : byLetter.get(letter);
+                            })));
+                }
+            } else {
+                boolean mac = os.startsWith("mac");
+                BiFunction<String, String, String> driveType =
+                        (mount, device) -> mac ? DriveTypes.forMac(mount, device) : DriveTypes.forLinux(device);
+                for (FileStore store : FileSystems.getDefault().getFileStores()) {
+                    lookups.add(executor.submit(
+                            () -> read(store, mountPoint(store.toString()), await(workspace, deadline), driveType)));
+                }
             }
-        } else {
-            BiFunction<String, String, String> driveType =
-                    (mount, device) -> mac ? DriveTypes.forMac(mount) : DriveTypes.forLinux(device);
-            for (FileStore store : FileSystems.getDefault().getFileStores()) {
-                add(volumes, store, mountPoint(store.toString()), workspaceStore, driveType);
+            List<Volume> volumes = new ArrayList<>();
+            for (Future<Volume> lookup : lookups) {
+                Volume volume = await(lookup, deadline);
+                if (volume != null) {
+                    volumes.add(volume);
+                }
             }
+            return volumes;
+        } finally {
+            // Threads blocked on a dead mount cannot be interrupted, but they are daemons.
+            executor.shutdownNow();
         }
-        return volumes;
     }
 
-    private static void add(
-            List<Volume> volumes,
-            Path root,
-            String mount,
-            FileStore workspaceStore,
-            BiFunction<String, String, String> driveType) {
-        try {
-            add(volumes, Files.getFileStore(root), mount, workspaceStore, driveType);
-        } catch (IOException | RuntimeException e) {
-            // Drives without media, such as card readers, cannot be read.
+    /** Reads one volume, or returns {@code null} if it is not storage, such as {@code proc}. */
+    private static Volume read(
+            FileStore store, String mount, FileStore workspaceStore, BiFunction<String, String, String> driveType)
+            throws IOException {
+        boolean workspace = store.equals(workspaceStore);
+        long total = store.getTotalSpace();
+        // The working directory is always shown, even on tmpfs, as in many container agents.
+        if (total <= 0 || (!workspace && isPseudoFilesystem(store.type())) || !Files.isDirectory(Path.of(mount))) {
+            return null;
         }
+        return new Volume(
+                mount,
+                store.name(),
+                store.type(),
+                driveType.apply(mount, store.name()),
+                total,
+                store.getUsableSpace(),
+                store.isReadOnly(),
+                workspace);
     }
 
-    private static void add(
-            List<Volume> volumes,
-            FileStore store,
-            String mount,
-            FileStore workspaceStore,
-            BiFunction<String, String, String> driveType) {
+    /**
+     * The result of a lookup, or {@code null} if it failed or did not finish in time. Drives without
+     * media, such as card readers, fail, and dead network mounts do not finish.
+     */
+    private static <T> T await(Future<T> future, long deadline) {
         try {
-            long total = store.getTotalSpace();
-            if (total <= 0 || isPseudoFilesystem(store.type()) || !Files.isDirectory(Path.of(mount))) {
-                return;
-            }
-            volumes.add(new Volume(
-                    mount,
-                    store.name(),
-                    store.type(),
-                    driveType.apply(mount, store.name()),
-                    total,
-                    store.getUsableSpace(),
-                    store.isReadOnly(),
-                    store.equals(workspaceStore)));
-        } catch (IOException | RuntimeException e) {
-            // A stale network mount can fail, which must not hide the other volumes.
+            return future.get(Math.max(0, deadline - System.nanoTime()), TimeUnit.NANOSECONDS);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        } catch (ExecutionException | TimeoutException e) {
+            future.cancel(true);
         }
+        return null;
     }
 
     private static FileStore storeOf(String path) {

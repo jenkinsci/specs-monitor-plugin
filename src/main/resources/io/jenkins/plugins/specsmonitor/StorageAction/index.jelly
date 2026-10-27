@@ -13,8 +13,11 @@
         of the node.
       </p>
       <j:choose>
-        <j:when test="${volumes == null}">
+        <j:when test="${volumes == null and it.computer.channel == null}">
           <p class="jenkins-description">The storage is only available while the node is connected to Jenkins.</p>
+        </j:when>
+        <j:when test="${volumes == null}">
+          <p>The node did not report its storage in time. Reload the page to try again.</p>
         </j:when>
         <j:when test="${volumes.isEmpty()}">
           <p>No drives or volumes were found on the node.</p>

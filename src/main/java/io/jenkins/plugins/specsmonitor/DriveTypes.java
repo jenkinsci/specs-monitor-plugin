@@ -101,8 +101,14 @@ final class DriveTypes {
         }
     }
 
-    /** The type of the disk behind a macOS volume, from {@code diskutil info}. */
-    static String forMac(String mount) {
+    /**
+     * The type of the disk behind a macOS volume, from {@code diskutil info}. Only asked for devices,
+     * since {@code diskutil} has no answer for network shares and each call takes a while.
+     */
+    static String forMac(String mount, String device) {
+        if (device == null || !device.startsWith("/dev/")) {
+            return null;
+        }
         return fromDiskutil(CommandRunner.tryRun("diskutil", "info", mount));
     }
 

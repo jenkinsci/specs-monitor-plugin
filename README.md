@@ -146,6 +146,8 @@ Jenkins' own free disk space column, which only reports that one volume.
   `Get-PhysicalDisk` on Windows, `/sys/block/*/queue/rotational` on Linux and `diskutil info` on macOS.
   The column is empty when the node does not say, which is common for network shares, containers and
   virtual disks. Some VMs also report a virtual disk as an HDD whatever hardware is behind it.
+- A volume that does not answer within a few seconds, such as a dead network share, is left out, so
+  one bad mount cannot block the page
 - Kernel and container internals (`proc`, `tmpfs`, `squashfs` and similar) and drives without media are
   left out
 
