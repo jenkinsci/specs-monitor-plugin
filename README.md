@@ -73,7 +73,7 @@ On other systems, or if the CPU name cannot be determined, the monitor shows `N/
 
 The **CPU Usage** monitor shows how busy the machine of every node is, for example `37%`. The usage
 is measured on the node over one second each time the monitor refreshes, so it is a snapshot. When it
-is above a configurable percentage (default 90%), it is shown in yellow with a warning symbol. Set the
+is at or above a configurable percentage (default 99%), it is shown in yellow with a warning symbol. Set the
 threshold in the monitor's configuration (`warnAbovePercent` in Configuration as Code); 100 turns the
 highlight off.
 
@@ -196,7 +196,7 @@ jenkins:
   nodeMonitors:
     - cpuMonitor
     - cpuUsageMonitor:
-        warnAbovePercent: 90
+        warnAbovePercent: 99
     - memoryMonitor
     - jvmMemoryMonitor
     - gpuMonitor

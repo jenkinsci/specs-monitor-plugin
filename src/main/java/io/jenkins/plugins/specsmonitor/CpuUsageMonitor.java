@@ -19,14 +19,14 @@ import org.kohsuke.stapler.DataBoundSetter;
 public class CpuUsageMonitor extends NodeMonitor {
 
     /** Default for {@link #getWarnAbovePercent()}. */
-    public static final int DEFAULT_WARN_ABOVE_PERCENT = 90;
+    public static final int DEFAULT_WARN_ABOVE_PERCENT = 99;
 
     private int warnAbovePercent = DEFAULT_WARN_ABOVE_PERCENT;
 
     @DataBoundConstructor
     public CpuUsageMonitor() {}
 
-    /** CPU usage above this percentage is highlighted as a warning. */
+    /** CPU usage at or above this percentage is highlighted as a warning. */
     public int getWarnAbovePercent() {
         return warnAbovePercent;
     }
@@ -36,12 +36,15 @@ public class CpuUsageMonitor extends NodeMonitor {
         this.warnAbovePercent = Math.max(0, Math.min(100, warnAbovePercent));
     }
 
-    /** Whether the system CPU usage in {@code info} is above the configured threshold. */
+    /**
+     * Whether the system CPU usage in {@code info} has reached the configured threshold. A
+     * threshold of 100 turns the warning off.
+     */
     public boolean isHigh(CpuUsageInfo info) {
-        if (info == null || info.getSystemPercent() < 0) {
+        if (info == null || info.getSystemPercent() < 0 || warnAbovePercent >= 100) {
             return false;
         }
-        return info.getSystemPercent() > warnAbovePercent;
+        return info.getSystemPercent() >= warnAbovePercent;
     }
 
     @Extension

@@ -42,12 +42,13 @@ class CpuUsageMonitorTest {
     }
 
     @Test
-    void isHighWhenUsageAboveThreshold(JenkinsRule j) {
+    void isHighWhenUsageReachesThreshold(JenkinsRule j) {
         CpuUsageMonitor monitor = new CpuUsageMonitor();
         monitor.setWarnAbovePercent(90);
 
         assertTrue(monitor.isHigh(new CpuUsageInfo(91, 1)));
-        assertFalse(monitor.isHigh(new CpuUsageInfo(90, 1)));
+        assertTrue(monitor.isHigh(new CpuUsageInfo(90, 1)));
+        assertFalse(monitor.isHigh(new CpuUsageInfo(89, 1)));
         assertFalse(monitor.isHigh(new CpuUsageInfo(-1, -1)));
         assertFalse(monitor.isHigh(null));
     }
