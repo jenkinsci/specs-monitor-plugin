@@ -24,8 +24,6 @@ import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 @WithJenkins
 class ColumnRenderTest {
 
-    private static final String WARNING_SYMBOL = "⚠";
-
     @Test
     void freeRamShowsTooltip(JenkinsRule j) throws Exception {
         assertShowsTooltip(j, new MemoryMonitor(), MemoryMonitor.DescriptorImpl.class, i -> i.getTooltip());
@@ -114,7 +112,7 @@ class ColumnRenderTest {
     }
 
     /**
-     * Whether the monitor's cell for the built-in node shows the warning symbol. Only that cell is
+     * Whether the monitor's cell for the built-in node is highlighted with the warning class. Only that cell is
      * checked, because other monitors on the page can show a warning of their own.
      */
     private static <T> boolean cellWarns(
@@ -136,7 +134,7 @@ class ColumnRenderTest {
             cells = page.getByXPath("//td[@tooltip='" + expected + "']");
         }
         assertEquals(1, cells.size(), "expected exactly one cell with the tooltip " + expected);
-        return cells.get(0).getTextContent().contains(WARNING_SYMBOL);
+        return !cells.get(0).getByXPath(".//span[@class='warning']").isEmpty();
     }
 
     /** Enables the monitor, waits until it has data for the built-in node and returns the node list. */
