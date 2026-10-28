@@ -13,8 +13,8 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 
 /**
- * Node monitor that reports the CPU usage of each node, with the usage of the agent process as a
- * tooltip.
+ * Node monitor that reports the CPU usage of each node, averaged over a few seconds, with the peak
+ * and the usage of the agent process as a tooltip.
  */
 public class CpuUsageMonitor extends NodeMonitor {
 
@@ -79,7 +79,10 @@ public class CpuUsageMonitor extends NodeMonitor {
     private static final class GetCpuUsageInfo extends MasterToSlaveCallable<CpuUsageInfo, IOException> {
         private static final long serialVersionUID = 1L;
 
-        /** How long CPU usage is measured. Short enough to stay well within the monitor timeout. */
+        /** Number of samples; one spike should not decide the reported usage. */
+        private static final int SAMPLES = 3;
+
+        /** Length of each sample. The whole measurement stays well within the monitor timeout. */
         private static final long SAMPLE_MILLIS = 1000;
 
         @Override
@@ -92,13 +95,41 @@ public class CpuUsageMonitor extends NodeMonitor {
             // the first call starts a fresh sample.
             bean.getCpuLoad();
             bean.getProcessCpuLoad();
-            try {
-                Thread.sleep(SAMPLE_MILLIS);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                throw new InterruptedIOException("Interrupted while measuring CPU usage");
+            double[] system = new double[SAMPLES];
+            double[] process = new double[SAMPLES];
+            for (int i = 0; i < SAMPLES; i++) {
+                try {
+                    Thread.sleep(SAMPLE_MILLIS);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    throw new InterruptedIOException("Interrupted while measuring CPU usage");
+                }
+                system[i] = toPercent(bean.getCpuLoad());
+                process[i] = toPercent(bean.getProcessCpuLoad());
             }
-            return new CpuUsageInfo(toPercent(bean.getCpuLoad()), toPercent(bean.getProcessCpuLoad()));
+            return new CpuUsageInfo(mean(system), mean(process), max(system));
+        }
+
+        /** Mean of the available (non-negative) samples, or -1 if there is none. */
+        static double mean(double[] samples) {
+            double sum = 0;
+            int count = 0;
+            for (double sample : samples) {
+                if (sample >= 0) {
+                    sum += sample;
+                    count++;
+                }
+            }
+            return count == 0 ? -1 : sum / count;
+        }
+
+        /** Highest of the samples, or -1 if none is available. */
+        static double max(double[] samples) {
+            double max = -1;
+            for (double sample : samples) {
+                max = Math.max(max, sample);
+            }
+            return max;
         }
 
         /** Converts a load between 0 and 1 to percent; negative or NaN (unavailable) becomes -1. */

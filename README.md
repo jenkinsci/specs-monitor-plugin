@@ -72,14 +72,17 @@ On other systems, or if the CPU name cannot be determined, the monitor shows `N/
 ## CPU usage monitor
 
 The **CPU Usage** monitor shows how busy the machine of every node is, for example `37%`. The usage
-is measured on the node over one second each time the monitor refreshes, so it is a snapshot. When it
+is measured on the node each time the monitor refreshes, as the mean of three one-second samples, so
+a single short spike does not decide the value. It is still a snapshot, not an average over the
+whole refresh interval. When it
 is at or above a configurable percentage (default 99%), it is shown in Jenkins' warning style. Set the
 threshold in the monitor's configuration (`warnAbovePercent` in Configuration as Code); 100 turns the
 highlight off.
 
-Hovering over the value shows, for example, `System: 37% • JVM: 2%`:
+Hovering over the value shows, for example, `System: 37% (peak 91%) • JVM: 2%`:
 
-- **System:** usage of the whole machine, all processes included
+- **System:** mean usage of the whole machine, all processes included. The highest of the three
+  samples is shown as the peak when it differs from the mean.
 - **JVM:** the share used by the Jenkins agent process itself. Build steps run as separate
   processes, so a high system value with a low JVM value means builds or other programs are busy.
 

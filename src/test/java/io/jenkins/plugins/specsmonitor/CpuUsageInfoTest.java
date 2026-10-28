@@ -19,6 +19,17 @@ class CpuUsageInfoTest {
     }
 
     @Test
+    void tooltipShowsPeakWhenItDiffersFromAverage() {
+        assertEquals("System: 37% (peak 91%) • JVM: 2%", new CpuUsageInfo(37, 2.2, 91).getTooltip());
+    }
+
+    @Test
+    void tooltipLeavesOutPeakThatEqualsAverage() {
+        assertEquals("System: 37% • JVM: 2%", new CpuUsageInfo(37.2, 2.2, 36.8).getTooltip());
+        assertEquals("System: 37% • JVM: 2%", new CpuUsageInfo(37, 2.2, -1).getTooltip());
+    }
+
+    @Test
     void tooltipLeavesOutUnknownJvm() {
         assertEquals("System: 5%", new CpuUsageInfo(5, -1).getTooltip());
     }

@@ -1,14 +1,16 @@
 <div>
     Shows the CPU usage of each node's machine, for example <code>37%</code>. The usage is measured
-    on the node itself over one second, each time the monitor refreshes, so it is a snapshot and not
-    an average over the whole interval. Usage at or above a configurable percentage (default 99%) is
+    on the node itself each time the monitor refreshes, as the mean of three one-second samples, so
+    a single short spike does not decide the value. It is still a snapshot and not an average over
+    the whole interval. Usage at or above a configurable percentage (default 99%) is
     shown in Jenkins' warning style.
     <p>
         Hover over the value to see more detail, for example
-        <code>System: 37% • JVM: 2%</code>:
+        <code>System: 37% (peak 91%) • JVM: 2%</code>:
     </p>
     <ul>
-        <li><em>System</em>: the CPU usage of the whole machine, all processes included.</li>
+        <li><em>System</em>: the mean CPU usage of the whole machine, all processes included. The
+            highest of the three samples is shown as the peak when it differs from the mean.</li>
         <li><em>JVM</em>: the share used by the Jenkins agent process itself. Build steps run as
             separate processes and are not included, so a high system value with a low JVM value
             means builds or other programs are using the CPU.</li>
