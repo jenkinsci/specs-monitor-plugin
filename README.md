@@ -73,7 +73,7 @@ On other systems, or if the CPU name cannot be determined, the monitor shows `N/
 
 The **CPU Usage** monitor shows how busy the machine of every node is, for example `37%`. The usage
 is measured on the node over one second each time the monitor refreshes, so it is a snapshot. When it
-is at or above a configurable percentage (default 99%), it is shown in yellow with a warning symbol. Set the
+is at or above a configurable percentage (default 99%), it is shown in Jenkins' warning style. Set the
 threshold in the monitor's configuration (`warnAbovePercent` in Configuration as Code); 100 turns the
 highlight off.
 
@@ -93,7 +93,7 @@ is a good complement.
 A second monitor, **Free RAM**, shows the available or free memory (RAM) of every node as a
 separate column, for example `15.6 GiB`. Sizes use binary units (1 GiB = 1024 MiB). Hovering over the value shows how much memory
 is free out of the total (for example `43.5 GiB free of 63.7 GiB`) at the time of the last refresh. When the value drops below a configurable percentage of the
-total (default 10%), it is shown in yellow with a warning symbol. Set the threshold in the
+total (default 10%), it is shown in Jenkins' warning style. Set the threshold in the
 monitor's configuration (`warnBelowPercent` in Configuration as Code).
 
 - Windows: `Win32_ComputerSystem.TotalPhysicalMemory` (PowerShell)
@@ -109,7 +109,7 @@ The **Free JVM Memory** monitor shows the free memory of the Java virtual machin
 node, for example `1.6 GiB`. Free memory is the maximum heap size minus the heap in use. Hovering
 over the value shows how much is free out of the maximum (for example `1.6 GiB free of 2 GiB`) at
 the time of the last refresh. When free memory drops below a configurable percentage of the
-maximum heap (default 10%), the value is shown in yellow with a warning symbol. Set the threshold
+maximum heap (default 10%), the value is shown in Jenkins' warning style. Set the threshold
 in the monitor's configuration (`warnBelowPercent` in Configuration as Code).
 
 ## Uptime monitor
