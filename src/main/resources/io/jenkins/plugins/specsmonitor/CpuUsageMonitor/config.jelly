@@ -1,0 +1,7 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
+  <f:entry title="Warn at or above (%)" field="warnAbovePercent"
+           description="Highlight the value when CPU usage is at or above this percentage. 100 turns the highlight off.">
+    <f:number min="0" max="100" default="${descriptor.defaultWarnAbovePercent}"/>
+  </f:entry>
+</j:jelly>

@@ -66,6 +66,29 @@ class ColumnRenderTest {
         assertFalse(cellWarns(j, never, JvmMemoryMonitor.DescriptorImpl.class, i -> i.getTooltip()));
     }
 
+    @Test
+    void cpuUsageShowsTooltip(JenkinsRule j) throws Exception {
+        ColumnTestSupport.assumeCpuUsageAvailable(j);
+        assertShowsTooltip(j, new CpuUsageMonitor(), CpuUsageMonitor.DescriptorImpl.class, i -> i.getTooltip());
+    }
+
+    @Test
+    void cpuUsageWarnsWhenAboveThreshold(JenkinsRule j) throws Exception {
+        ColumnTestSupport.assumeCpuUsageAvailable(j);
+        CpuUsageMonitor always = new CpuUsageMonitor();
+        always.setWarnAbovePercent(0);
+
+        assertTrue(cellWarns(j, always, CpuUsageMonitor.DescriptorImpl.class, i -> i.getTooltip()));
+    }
+
+    @Test
+    void cpuUsageDoesNotWarnWithThresholdOfHundred(JenkinsRule j) throws Exception {
+        CpuUsageMonitor never = new CpuUsageMonitor();
+        never.setWarnAbovePercent(100);
+
+        assertFalse(cellWarns(j, never, CpuUsageMonitor.DescriptorImpl.class, i -> i.getTooltip()));
+    }
+
     /** Checks that the node list has the tooltip of the data the monitor collected for the built-in node. */
     private static <T> void assertShowsTooltip(
             JenkinsRule j,
@@ -75,7 +98,7 @@ class ColumnRenderTest {
             throws Exception {
         String html = renderPage(j, monitor, descriptor).getWebResponse().getContentAsString();
         String expected = null;
-        // Free JVM memory changes constantly and the monitor can refresh between rendering the page
+        // Free JVM memory and CPU usage change constantly and the monitor can refresh between rendering the page
         // and reading the data, so retry until both agree.
         for (int i = 0; i < 10; i++) {
             if (i > 0) {
@@ -103,7 +126,7 @@ class ColumnRenderTest {
         HtmlPage page = renderPage(j, monitor, descriptor);
         String expected = null;
         List<HtmlElement> cells = List.of();
-        // Free JVM memory changes constantly and the monitor can refresh between rendering the page
+        // Free JVM memory and CPU usage change constantly and the monitor can refresh between rendering the page
         // and reading the data, so retry until both agree.
         for (int i = 0; i < 10 && cells.size() != 1; i++) {
             if (i > 0) {

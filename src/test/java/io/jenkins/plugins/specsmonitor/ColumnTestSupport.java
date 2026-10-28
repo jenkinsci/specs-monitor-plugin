@@ -1,5 +1,7 @@
 package io.jenkins.plugins.specsmonitor;
 
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
+
 import hudson.ExtensionList;
 import hudson.model.Computer;
 import hudson.model.ComputerSet;
@@ -38,6 +40,17 @@ final class ColumnTestSupport {
             Thread.sleep(100);
         }
         return d.get(computer);
+    }
+
+    /**
+     * Skips the test if the JVM cannot measure CPU usage, which happens on some CI agents (e.g. Windows
+     * containers); the monitor then reports "N/A", which {@code CpuUsageInfoTest} covers.
+     */
+    static void assumeCpuUsageAvailable(JenkinsRule j) throws Exception {
+        CpuUsageInfo info = ExtensionList.lookupSingleton(CpuUsageMonitor.DescriptorImpl.class)
+                .createCallable(j.jenkins.toComputer())
+                .call();
+        assumeTrue(info.getSystemPercent() >= 0, "the JVM cannot measure CPU usage on this machine");
     }
 
     static HtmlPage renderNodeList(JenkinsRule j) throws Exception {

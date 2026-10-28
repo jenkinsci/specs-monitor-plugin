@@ -9,6 +9,7 @@ agents are fast or slow without opening each one.
 | Monitor | Shows | Example |
 | --- | --- | --- |
 | [CPU](#cpu-monitor) | CPU model, hardware threads and benchmark score | `i7-13700K (16 threads)` |
+| [CPU Usage](#cpu-usage-monitor) | Current CPU usage, with a warning when the node is busy | `37%` |
 | [Free RAM](#memory-monitor) | Available memory, with a warning when it runs low | `15.6 GiB` |
 | [GPU](#gpu-monitor) | Graphics processor | `NVIDIA GeForce RTX 4070` |
 | [Free JVM Memory](#jvm-memory-monitor) | Free heap of the node's JVM, with a warning when it runs low | `1.6 GiB` |
@@ -68,12 +69,34 @@ contains the Blender device name and median score.
 
 On other systems, or if the CPU name cannot be determined, the monitor shows `N/A`.
 
+## CPU usage monitor
+
+The **CPU Usage** monitor shows how busy the machine of every node is, for example `37%`. The usage
+is measured on the node each time the monitor refreshes, as the mean of three one-second samples, so
+a single short spike does not decide the value. It is still a snapshot, not an average over the
+whole refresh interval. When it
+is at or above a configurable percentage (default 99%), it is shown in Jenkins' warning style. Set the
+threshold in the monitor's configuration (`warnAbovePercent` in Configuration as Code); 100 turns the
+highlight off.
+
+Hovering over the value shows, for example, `System: 37% (peak 91%) • JVM: 2%`:
+
+- **System:** mean usage of the whole machine, all processes included. The highest of the three
+  samples is shown as the peak when it differs from the mean.
+- **JVM:** the share used by the Jenkins agent process itself. Build steps run as separate
+  processes, so a high system value with a low JVM value means builds or other programs are busy.
+
+Inside a container, the usage is relative to the container's CPU limit.
+
+For graphs of CPU usage over time, the [Monitoring plugin](https://plugins.jenkins.io/monitoring/)
+is a good complement.
+
 ## Memory monitor
 
 A second monitor, **Free RAM**, shows the available or free memory (RAM) of every node as a
 separate column, for example `15.6 GiB`. Sizes use binary units (1 GiB = 1024 MiB). Hovering over the value shows how much memory
 is free out of the total (for example `43.5 GiB free of 63.7 GiB`) at the time of the last refresh. When the value drops below a configurable percentage of the
-total (default 10%), it is shown in yellow with a warning symbol. Set the threshold in the
+total (default 10%), it is shown in Jenkins' warning style. Set the threshold in the
 monitor's configuration (`warnBelowPercent` in Configuration as Code).
 
 - Windows: `Win32_ComputerSystem.TotalPhysicalMemory` (PowerShell)
@@ -89,7 +112,7 @@ The **Free JVM Memory** monitor shows the free memory of the Java virtual machin
 node, for example `1.6 GiB`. Free memory is the maximum heap size minus the heap in use. Hovering
 over the value shows how much is free out of the maximum (for example `1.6 GiB free of 2 GiB`) at
 the time of the last refresh. When free memory drops below a configurable percentage of the
-maximum heap (default 10%), the value is shown in yellow with a warning symbol. Set the threshold
+maximum heap (default 10%), the value is shown in Jenkins' warning style. Set the threshold
 in the monitor's configuration (`warnBelowPercent` in Configuration as Code).
 
 ## Uptime monitor
@@ -165,7 +188,7 @@ GPU information show `N/A`.
 
 1. Install the plugin.
 2. Go to **Manage Jenkins → Nodes → Configure Monitors** (gear icon).
-3. Enable **CPU**, **Free RAM**, **Free JVM Memory**, **GPU**, **Uptime** and/or **Connection**.
+3. Enable **CPU**, **CPU Usage**, **Free RAM**, **Free JVM Memory**, **GPU**, **Uptime** and/or **Connection**.
 4. A column appears in the node list for each monitor you enabled, for example `i7-13700K (16 threads)`
    for CPU or `15.6 GiB` for Free RAM. Hover over a value for more detail.
 
@@ -175,6 +198,8 @@ GPU information show `N/A`.
 jenkins:
   nodeMonitors:
     - cpuMonitor
+    - cpuUsageMonitor:
+        warnAbovePercent: 99
     - memoryMonitor
     - jvmMemoryMonitor
     - gpuMonitor
