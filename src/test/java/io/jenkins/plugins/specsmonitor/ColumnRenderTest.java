@@ -68,11 +68,13 @@ class ColumnRenderTest {
 
     @Test
     void cpuUsageShowsTooltip(JenkinsRule j) throws Exception {
+        ColumnTestSupport.assumeCpuUsageAvailable(j);
         assertShowsTooltip(j, new CpuUsageMonitor(), CpuUsageMonitor.DescriptorImpl.class, i -> i.getTooltip());
     }
 
     @Test
     void cpuUsageWarnsWhenAboveThreshold(JenkinsRule j) throws Exception {
+        ColumnTestSupport.assumeCpuUsageAvailable(j);
         CpuUsageMonitor always = new CpuUsageMonitor();
         always.setWarnAbovePercent(0);
 

@@ -3,6 +3,7 @@ package io.jenkins.plugins.specsmonitor;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import hudson.ExtensionList;
 import hudson.node_monitors.NodeMonitor;
@@ -30,7 +31,7 @@ class CpuUsageMonitorTest {
         assertFalse(descriptor.getDisplayName().isBlank());
     }
 
-    /** The JVMs used on CI (Windows, Linux, macOS) can all measure CPU usage. */
+    /** Skipped where the JVM cannot measure CPU usage, e.g. in some Windows containers on CI. */
     @Test
     void callableReturnsUsageOnAnyOs(JenkinsRule j) throws Exception {
         CpuUsageMonitor.DescriptorImpl descriptor = ExtensionList.lookupSingleton(CpuUsageMonitor.DescriptorImpl.class);
@@ -38,7 +39,8 @@ class CpuUsageMonitorTest {
         CpuUsageInfo info = descriptor.createCallable(j.jenkins.toComputer()).call();
 
         assertNotNull(info);
-        assertTrue(info.getSystemPercent() >= 0 && info.getSystemPercent() <= 100);
+        assumeTrue(info.getSystemPercent() >= 0, "the JVM cannot measure CPU usage on this machine");
+        assertTrue(info.getSystemPercent() <= 100);
     }
 
     @Test
