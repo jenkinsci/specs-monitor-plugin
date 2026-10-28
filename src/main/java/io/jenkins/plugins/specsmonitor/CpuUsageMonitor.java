@@ -105,6 +105,9 @@ public class CpuUsageMonitor extends NodeMonitor {
                     throw new InterruptedIOException("Interrupted while measuring CPU usage");
                 }
                 system[i] = toPercent(bean.getCpuLoad());
+                if (system[i] < 0) {
+                    system[i] = fromLoadAverage(bean);
+                }
                 process[i] = toPercent(bean.getProcessCpuLoad());
             }
             return new CpuUsageInfo(mean(system), mean(process), max(system));
@@ -130,6 +133,16 @@ public class CpuUsageMonitor extends NodeMonitor {
                 max = Math.max(max, sample);
             }
             return max;
+        }
+
+        /**
+         * Fallback for JVMs (e.g. in some containers) that cannot report the CPU load: the 1-minute load
+         * average relative to the number of processors, or -1 if that is unavailable too (Windows).
+         */
+        private static double fromLoadAverage(com.sun.management.OperatingSystemMXBean bean) {
+            double load = bean.getSystemLoadAverage();
+            int processors = bean.getAvailableProcessors();
+            return load >= 0 && processors > 0 ? Math.min(100, load / processors * 100) : -1;
         }
 
         /** Converts a load between 0 and 1 to percent; negative or NaN (unavailable) becomes -1. */
