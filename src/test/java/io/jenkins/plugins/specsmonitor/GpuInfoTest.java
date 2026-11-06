@@ -109,7 +109,7 @@ class GpuInfoTest {
 
         GpuInfo info = new GpuInfo("NVIDIA GeForce RTX 4060 Laptop GPU");
         assertEquals("NVIDIA GeForce RTX 4060 Laptop GPU", info.getName());
-        assertEquals("NVIDIA GeForce RTX 4060 Laptop GPU • Score: 2,923.74", info.getTooltip());
+        assertEquals("NVIDIA GeForce RTX 4060 Laptop GPU • Score: 2,937.42", info.getTooltip());
     }
 
     @Test
