@@ -103,17 +103,16 @@ public class GpuInfo implements Serializable {
     private static String normalizeModel(String model) {
         int separator = model.indexOf(' ');
         String family = separator < 0 ? model : model.substring(0, separator);
-        String normalizedFamily =
-                switch (family.toLowerCase(Locale.ROOT)) {
-                    case "arc" -> "Arc";
-                    case "max" -> "Max";
-                    case "flex" -> "Flex";
-                    case "quadro" -> "Quadro";
-                    case "tesla" -> "Tesla";
-                    case "instinct" -> "Instinct";
-                    case "pro" -> "Pro";
-                    default -> family.toUpperCase(Locale.ROOT);
-                };
+        String normalizedFamily = switch (family.toLowerCase(Locale.ROOT)) {
+            case "arc" -> "Arc";
+            case "max" -> "Max";
+            case "flex" -> "Flex";
+            case "quadro" -> "Quadro";
+            case "tesla" -> "Tesla";
+            case "instinct" -> "Instinct";
+            case "pro" -> "Pro";
+            default -> family.toUpperCase(Locale.ROOT);
+        };
         String normalized = separator < 0 ? normalizedFamily : normalizedFamily + model.substring(separator);
         return normalized.replaceAll("(?i)\\bSUPER\\b", "SUPER");
     }
