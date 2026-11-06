@@ -17,6 +17,7 @@ public class GpuInfo implements Serializable {
     private static final Pattern LINUX_CONTROLLER = Pattern.compile(
             "(?i)\\b(?:VGA compatible controller|3D controller|Display controller):\\s*(.+?)(?:\\s+\\(rev [^)]+\\))?$");
     private static final Pattern MAC_CHIPSET = Pattern.compile("^\\s*Chipset Model: (.+?)\\s*$");
+    private static final Pattern MAC_GPU_CORES = Pattern.compile("^\\s*Total Number of Cores: (\\d+)\\s*$");
     private static final Pattern WINDOWS_ADAPTER = Pattern.compile("^(.+?)\\t(.*)$");
     private static final Pattern NVIDIA_QUADRO_MODEL =
             Pattern.compile("\\bQuadro\\s+(?:RTX\\s+A?\\d{3,4}|P\\d{4})\\b", Pattern.CASE_INSENSITIVE);
@@ -187,6 +188,17 @@ public class GpuInfo implements Serializable {
                 Matcher matcher = MAC_CHIPSET.matcher(line);
                 if (matcher.matches()) {
                     names.add(matcher.group(1));
+                    continue;
+                }
+                // Apple Silicon reports its GPU core count on a separate line after the chipset. Variants of the
+                // same chip (for example M5 Ultra with 64 or 80 cores) score very differently, so keep it in the name.
+                Matcher cores = MAC_GPU_CORES.matcher(line);
+                if (cores.matches() && !names.isEmpty()) {
+                    int last = names.size() - 1;
+                    String chipset = names.get(last);
+                    if (chipset.startsWith("Apple ") && !chipset.contains("(GPU")) {
+                        names.set(last, chipset + " (GPU - " + cores.group(1) + " cores)");
+                    }
                 }
             }
         }
