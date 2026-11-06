@@ -48,6 +48,15 @@ class GpuInfoTest {
     }
 
     @Test
+    void includesAppleSiliconGpuCoreCountForScoreLookup() {
+        GpuInfo info = GpuInfo.fromMacSystemProfiler(
+                "    Apple M5 Ultra:\n\n      Chipset Model: Apple M5 Ultra\n      Type: GPU\n"
+                        + "      Bus: Built-In\n      Total Number of Cores: 64\n      Vendor: Apple (0x106b)\n");
+        assertEquals("Apple M5 Ultra (GPU - 64 cores)", info.getName());
+        assertEquals("13,514.88", info.getScore());
+    }
+
+    @Test
     void prefersDedicatedPciGpuOverVirtualDisplayDriver() {
         assertEquals(
                 "NVIDIA GeForce RTX 4090",
@@ -109,7 +118,7 @@ class GpuInfoTest {
 
         GpuInfo info = new GpuInfo("NVIDIA GeForce RTX 4060 Laptop GPU");
         assertEquals("NVIDIA GeForce RTX 4060 Laptop GPU", info.getName());
-        assertEquals("NVIDIA GeForce RTX 4060 Laptop GPU • Score: 2,923.74", info.getTooltip());
+        assertEquals("NVIDIA GeForce RTX 4060 Laptop GPU • Score: 2,937.42", info.getTooltip());
     }
 
     @Test
