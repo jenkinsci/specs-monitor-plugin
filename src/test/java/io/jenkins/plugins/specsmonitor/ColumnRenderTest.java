@@ -83,6 +83,7 @@ class ColumnRenderTest {
 
     @Test
     void cpuUsageDoesNotWarnWithThresholdOfHundred(JenkinsRule j) throws Exception {
+        ColumnTestSupport.assumeCpuUsageAvailable(j);
         CpuUsageMonitor never = new CpuUsageMonitor();
         never.setWarnAbovePercent(100);
 
